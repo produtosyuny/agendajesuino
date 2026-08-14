@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quaddra Jesuíno — Agenda (Stand &amp; Quadra)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
+<style>
+  :root{
+    --verde: #13291F;
+    --verde-dk: #0A1913;
+    --bege: #C9A184;
+    --bege-dk: #A8815F;
+    --bg: #F3F6F4;
+    --surface: #FFFFFF;
+    --surface2: #EEF2EF;
+    --border: rgba(15,23,23,0.08);
+    --border2: rgba(15,23,23,0.15);
+    --text: #141414;
+    --text-muted: rgba(15,23,23,0.55);
+    --quadra: #2563EB;
+    --ok: #15803D;
+    --pendente: #D97706;
+    --cancelado: #6B7280;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;margin:0;}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;}
+  .oculta{display:none !important;}
+
+  /* Login */
+  #telaLogin{min-height:100%;display:flex;align-items:center;justify-content:center;background:var(--verde);padding:1.5rem;flex:1;}
+  .login-card{background:var(--surface);border-radius:16px;padding:2rem;width:100%;max-width:380px;box-shadow:0 10px 40px rgba(0,0,0,0.25);}
+  .login-brand{display:flex;align-items:center;gap:0.6rem;margin-bottom:1.4rem;}
+  .login-brand .yuny{font-weight:700;font-size:1rem;color:var(--verde-dk);}
+  .login-brand .divider{width:1px;height:16px;background:var(--border2);}
+  .login-brand .titulo{font-size:0.78rem;color:var(--text-muted);}
+  .login-card h1{margin:0 0 0.3rem;font-size:1.3rem;color:var(--verde-dk);}
+  .login-card p{margin:0 0 1.2rem;font-size:0.85rem;color:var(--text-muted);}
+  .login-erro{background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.25);color:#B91C1C;font-size:0.8rem;padding:0.55rem 0.75rem;border-radius:8px;margin-bottom:1rem;}
+
+  #appShell{display:flex;flex-direction:column;min-height:100%;flex:1;}
+
+  header{background:var(--verde);border-bottom:1px solid var(--verde-dk);padding:0.9rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;}
+  .brand{display:flex;align-items:center;gap:0.75rem;color:#fff;}
+  .brand .yuny{font-weight:700;font-size:1.1rem;letter-spacing:-0.02em;}
+  .brand .divider{width:1px;height:18px;background:rgba(255,255,255,0.3);}
+  .brand .titulo{font-size:0.92rem;color:rgba(255,255,255,0.85);}
+  .badge-proto{background:rgba(255,255,255,0.15);color:#fff;font-size:0.68rem;padding:0.2rem 0.55rem;border-radius:10px;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;}
+  .user-info{display:flex;align-items:center;gap:0.65rem;}
+  .user-info .quem{color:rgba(255,255,255,0.85);font-size:0.8rem;}
+  .btn-logout{background:rgba(255,255,255,0.12);border:none;color:#fff;font-size:0.75rem;padding:0.4rem 0.7rem;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:0.3rem;}
+  .btn-logout:hover{background:rgba(255,255,255,0.22);}
+
+  main{flex:1;overflow-y:auto;padding:1.5rem;max-width:1100px;margin:0 auto;width:100%;}
+
+  .toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:1.25rem;}
+  .semana-nav{display:flex;align-items:center;gap:0.5rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:0.35rem;}
+  .semana-nav button{background:none;border:none;width:32px;height:32px;border-radius:8px;cursor:pointer;color:var(--verde);font-size:1rem;display:flex;align-items:center;justify-content:center;}
+  .semana-nav button:hover{background:var(--surface2);}
+  .semana-label{font-weight:600;font-size:0.88rem;padding:0 0.5rem;min-width:210px;text-align:center;}
+
+  .filtros{display:flex;gap:0.4rem;}
+  .filtro-chip{border:1px solid var(--border2);background:var(--surface);border-radius:20px;padding:0.4rem 0.9rem;font-size:0.8rem;cursor:pointer;font-weight:500;color:var(--text-muted);display:flex;align-items:center;gap:0.4rem;}
+  .filtro-chip.ativo{background:var(--verde);border-color:var(--verde);color:#fff;}
+  .filtro-chip .dot{width:8px;height:8px;border-radius:50%;}
+
+  .btn{border:none;border-radius:10px;padding:0.6rem 1.1rem;font-weight:600;font-size:0.85rem;cursor:pointer;display:inline-flex;align-items:center;gap:0.4rem;}
+  .btn-primary{background:var(--verde);color:#fff;}
+  .btn-primary:hover{background:var(--verde-dk);}
+  .btn-ghost{background:var(--surface);border:1px solid var(--border2);color:var(--text);}
+  .btn-ghost.ativo{background:var(--verde);border-color:var(--verde);color:#fff;}
+
+  .resumo-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0.9rem;margin-bottom:1.5rem;}
+  .resumo-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:0.9rem 1rem;}
+  .resumo-card .k{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);font-weight:600;}
+  .resumo-card .v{font-size:1.5rem;font-weight:700;margin-top:0.2rem;}
+
+  .dia-grupo{margin-bottom:1.5rem;}
+  .dia-header{font-size:0.82rem;font-weight:700;color:var(--verde-dk);text-transform:capitalize;margin-bottom:0.6rem;padding-bottom:0.4rem;border-bottom:2px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+  .dia-header .hoje-tag{background:var(--bege);color:var(--verde-dk);font-size:0.65rem;padding:0.15rem 0.5rem;border-radius:8px;font-weight:700;}
+
+  .reserva-card{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--bege);border-radius:10px;padding:0.85rem 1rem;margin-bottom:0.6rem;display:flex;gap:1rem;align-items:flex-start;cursor:pointer;transition:box-shadow 0.15s;}
+  .reserva-card:hover{box-shadow:0 2px 10px rgba(0,0,0,0.06);}
+  .reserva-card.recurso-quadra{border-left-color:var(--quadra);}
+  .reserva-card.status-cancelado{opacity:0.5;}
+  .reserva-card.status-cancelado .r-titulo{text-decoration:line-through;}
+
+  .r-hora{min-width:92px;font-weight:700;font-size:0.82rem;color:var(--verde-dk);display:flex;flex-direction:column;gap:0.15rem;}
+  .r-duracao{font-size:0.68rem;font-weight:500;color:var(--text-muted);}
+  .r-corpo{flex:1;}
+  .r-titulo-row{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;}
+  .r-titulo{font-weight:600;font-size:0.92rem;}
+  .r-recurso-tag{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.15rem 0.5rem;border-radius:8px;background:var(--surface2);color:var(--bege-dk);display:inline-flex;align-items:center;gap:0.25rem;}
+  .recurso-quadra .r-recurso-tag{color:var(--quadra);}
+  .r-tipo-tag{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.15rem 0.5rem;border-radius:8px;background:var(--surface2);color:var(--verde-dk);border:1px solid var(--border2);}
+  .r-cliente{font-size:0.82rem;color:var(--text);margin-top:0.3rem;display:flex;align-items:center;gap:0.35rem;}
+  .r-cliente i{color:var(--text-muted);font-size:0.85rem;}
+  .r-cliente.oculto{color:var(--text-muted);font-style:italic;}
+  .r-obs{font-size:0.76rem;color:var(--text-muted);margin-top:0.3rem;font-style:italic;}
+
+  .status-pill{font-size:0.68rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:10px;white-space:nowrap;}
+  .status-confirmado{background:rgba(21,128,61,0.12);color:var(--ok);}
+  .status-pendente{background:rgba(217,119,6,0.12);color:var(--pendente);}
+  .status-cancelado-pill{background:rgba(107,114,128,0.12);color:var(--cancelado);}
+
+  .vazio{text-align:center;padding:3rem 1rem;color:var(--text-muted);}
+  .vazio i{font-size:2.2rem;opacity:0.4;}
+
+  /* Modal */
+  .overlay{position:fixed;inset:0;background:rgba(10,20,15,0.45);display:none;align-items:center;justify-content:center;z-index:50;padding:1rem;}
+  .overlay.aberto{display:flex;}
+  .modal{background:var(--surface);border-radius:14px;padding:1.5rem;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
+  .modal h2{margin:0 0 1rem;font-size:1.1rem;color:var(--verde-dk);}
+  .field{margin-bottom:0.9rem;}
+  .field label{display:block;font-size:0.75rem;font-weight:600;color:var(--text-muted);margin-bottom:0.3rem;text-transform:uppercase;letter-spacing:0.03em;}
+  .field input, .field select, .field textarea{width:100%;padding:0.55rem 0.7rem;border:1px solid var(--border2);border-radius:8px;font-family:inherit;font-size:0.88rem;background:var(--surface);}
+  .field textarea{resize:vertical;min-height:60px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;}
+  .modal-actions{display:flex;justify-content:space-between;gap:0.6rem;margin-top:1.2rem;}
+  .modal-actions .esquerda{display:flex;gap:0.5rem;}
+  .conflito-aviso{background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.25);color:#B91C1C;font-size:0.8rem;padding:0.6rem 0.8rem;border-radius:8px;margin-bottom:0.9rem;display:none;align-items:flex-start;gap:0.5rem;}
+  .conflito-aviso.mostrar{display:flex;}
+  .btn-excluir{background:none;border:none;color:#B91C1C;font-size:0.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:0.3rem;}
+
+  .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--verde-dk);color:#fff;padding:0.7rem 1.2rem;border-radius:10px;font-size:0.85rem;font-weight:500;opacity:0;pointer-events:none;transition:opacity 0.2s;z-index:100;}
+  .toast.mostrar{opacity:1;}
+
+  .nota-prototipo{background:var(--surface2);border:1px dashed var(--border2);border-radius:10px;padding:0.8rem 1rem;font-size:0.78rem;color:var(--text-muted);margin-bottom:1.25rem;}
+</style>
+</head>
+<body>
+
+<div id="telaLogin">
+  <div class="login-card">
+    <div class="login-brand">
+      <span class="yuny">yuny</span>
+      <div class="divider"></div>
+      <span class="titulo">Quaddra Jesuíno — Agenda</span>
+    </div>
+    <h1>Entrar</h1>
+    <p>Acesso restrito. Use o mesmo usuário e senha do backoffice.</p>
+    <div id="loginErro" class="login-erro" style="display:none"></div>
+    <div class="field">
+      <label>Usuário</label>
+      <input id="loginUsuario" type="text" autocomplete="username" onkeydown="if(event.key==='Enter')tentarLogin()">
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input id="loginSenha" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')tentarLogin()">
+    </div>
+    <button class="btn btn-primary" id="loginBtn" onclick="tentarLogin()" style="width:100%;justify-content:center;">Entrar</button>
+  </div>
+</div>
+
+<div id="appShell" class="oculta">
+
+<header>
+  <div class="brand">
+    <span class="yuny">yuny</span>
+    <div class="divider"></div>
+    <span class="titulo">Quaddra Jesuíno — Agenda (Stand &amp; Quadra de Tênis)</span>
+  </div>
+  <div class="user-info">
+    <span class="badge-proto"><i class="ti ti-database"></i> Conectado à planilha</span>
+    <span class="quem" id="quemEstaLogado"></span>
+    <button class="btn-logout" onclick="fazerLogout()"><i class="ti ti-logout"></i> Sair</button>
+  </div>
+</header>
+
+<main>
+  <div class="nota-prototipo">
+    <i class="ti ti-info-circle"></i> Essa agenda já salva de verdade na planilha AGENDAJESUINO. Por enquanto ela funciona como página separada — ainda não está integrada ao site principal dos Quaddras.
+  </div>
+
+  <div class="resumo-row" id="resumoRow"></div>
+
+  <div class="toolbar">
+    <div class="semana-nav">
+      <button onclick="mudarSemana(-1)"><i class="ti ti-chevron-left"></i></button>
+      <span class="semana-label" id="semanaLabel"></span>
+      <button onclick="mudarSemana(1)"><i class="ti ti-chevron-right"></i></button>
+    </div>
+    <div class="filtros" id="filtrosRecurso"></div>
+    <div style="display:flex;gap:0.5rem;">
+      <button class="btn btn-ghost" id="btnOcultarCliente" onclick="toggleOcultarCliente()"><i class="ti ti-eye-off"></i> Ocultar cliente</button>
+      <button class="btn btn-primary" onclick="abrirModal()"><i class="ti ti-plus"></i> Nova Reserva</button>
+    </div>
+  </div>
+
+  <div id="agendaLista"></div>
+</main>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2 id="modalTitulo">Nova Reserva</h2>
+    <div class="conflito-aviso" id="conflitoAviso">
+      <i class="ti ti-alert-triangle"></i>
+      <span id="conflitoTexto"></span>
+    </div>
+    <input type="hidden" id="fId">
+    <div class="field">
+      <label>Recurso</label>
+      <select id="fRecurso">
+        <option value="stand">Stand</option>
+        <option value="quadra">Quadra de Tênis</option>
+      </select>
+    </div>
+    <div class="field" id="campoTipo">
+      <label>Tipo</label>
+      <select id="fTipo">
+        <option value="visita">Visita</option>
+        <option value="apresentacao">Apresentação</option>
+        <option value="reuniao">Reunião</option>
+      </select>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Data</label>
+        <input type="date" id="fData">
+      </div>
+      <div class="field">
+        <label>Horário de</label>
+        <input type="time" id="fHora">
+      </div>
+    </div>
+    <div class="field">
+      <label>Horário até</label>
+      <input type="time" id="fHoraFim">
+    </div>
+    <div class="field">
+      <label>Cliente(s) / Participantes</label>
+      <input type="text" id="fCliente" placeholder="Ex: Carolina Gueogjian e Kleber Gueogjian">
+    </div>
+    <div class="field">
+      <label id="labelResponsavel">Corretor / Origem</label>
+      <input type="text" id="fResponsavel" placeholder="Ex: Ricardo Nunes / Sabatino">
+    </div>
+    <div class="field">
+      <label>Observações</label>
+      <textarea id="fObs" placeholder="Ex: Acesso autorizado por..."></textarea>
+    </div>
+    <div class="field">
+      <label>Status</label>
+      <select id="fStatus">
+        <option value="confirmado">Confirmado</option>
+        <option value="pendente">Pendente</option>
+        <option value="cancelado">Cancelado</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <div class="esquerda">
+        <button class="btn-excluir" id="btnExcluir" onclick="excluirReserva()" style="display:none;"><i class="ti ti-trash"></i> Excluir</button>
+      </div>
+      <div style="display:flex;gap:0.5rem;">
+        <button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>
+        <button class="btn btn-primary" id="btnSalvar" onclick="salvarReserva()"><i class="ti ti-check"></i> Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /#appShell -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+//  LOGIN — mesmo usuário/senha do backoffice (planilha "Usuarios" do Lorena,
+//  hoje já é a fonte única de login pros dois projetos).
+// ═══════════════════════════════════════════════════════════════════
+const LOGIN_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvtfIsqxuzVtNuCr0_9Otx-E29GGj5i_-qTwr9gpajhWHCS6Ja4WmNLacdGD6bU7Q18w/exec";
+const LOGIN_STORAGE_KEY = 'quaddra_auth_usuario';
+
+async function tentarLogin(){
+  const usuario = document.getElementById('loginUsuario').value.trim();
+  const senha = document.getElementById('loginSenha').value;
+  const erroEl = document.getElementById('loginErro');
+  const btn = document.getElementById('loginBtn');
+  erroEl.style.display = 'none';
+
+  if (!usuario || !senha){
+    erroEl.textContent = 'Preencha usuário e senha.';
+    erroEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Entrando...';
+  try{
+    const resp = await fetch(LOGIN_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // evita preflight CORS no Apps Script
+      body: JSON.stringify({ action: 'login', usuario, senha })
+    });
+    const data = await resp.json();
+    if (data && data.ok){
+      localStorage.setItem(LOGIN_STORAGE_KEY, usuario);
+      liberarAcessoPosLogin();
+    } else {
+      erroEl.textContent = 'Usuário ou senha incorretos.';
+      erroEl.style.display = 'block';
+    }
+  } catch(e){
+    console.error(e);
+    erroEl.textContent = 'Não foi possível validar o login agora. Verifique sua internet e tente de novo.';
+    erroEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Entrar';
+  }
+}
+
+function liberarAcessoPosLogin(){
+  document.getElementById('telaLogin').classList.add('oculta');
+  document.getElementById('appShell').classList.remove('oculta');
+  const usuario = localStorage.getItem(LOGIN_STORAGE_KEY);
+  document.getElementById('quemEstaLogado').textContent = usuario ? `Olá, ${usuario}` : '';
+  carregarReservas();
+}
+
+function fazerLogout(){
+  localStorage.removeItem(LOGIN_STORAGE_KEY);
+  document.getElementById('appShell').classList.add('oculta');
+  document.getElementById('telaLogin').classList.remove('oculta');
+  document.getElementById('loginUsuario').value = '';
+  document.getElementById('loginSenha').value = '';
+  document.getElementById('loginErro').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  DADOS REAIS — planilha AGENDAJESUINO, via Apps Script
+// ═══════════════════════════════════════════════════════════════════
+const AGENDA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyrO9C9nqw_g19k-0nwZ649-odo9v8RkKF00IpRwiGDCCfIoo4ZSQFkUfLnR_sMKGgG/exec";
+
+let reservas = [];
+let carregandoReservas = false;
+
+async function carregarReservas(){
+  carregandoReservas = true;
+  render();
+  try{
+    const resp = await fetch(AGENDA_SCRIPT_URL);
+    const data = await resp.json();
+    if (data && data.status === 'success'){
+      reservas = data.data || [];
+    } else {
+      mostrarToast((data && data.message) || 'Não foi possível carregar as reservas.');
+    }
+  } catch(e){
+    console.error(e);
+    mostrarToast('Erro de conexão ao carregar as reservas. Verifique sua internet.');
+  } finally {
+    carregandoReservas = false;
+    render();
+  }
+}
+
+const RECURSOS = {
+  stand:  { label: 'Stand', icon: 'ti-building-store' },
+  quadra: { label: 'Quadra de Tênis', icon: 'ti-ball-tennis' }
+};
+
+// Tipos de compromisso — só se aplicam a reservas do Stand.
+const TIPOS_STAND = {
+  visita:        { label: 'Visita' },
+  apresentacao:  { label: 'Apresentação' },
+  reuniao:       { label: 'Reunião' }
+};
+
+// Duração padrão sugerida ao abrir "Nova Reserva" (minutos) — ajustável aqui.
+// Continua totalmente editável reserva a reserva.
+const DURACAO_PADRAO = { quadra: 60, stand: 120 };
+
+let filtroRecurso = 'todos';
+let semanaOffset = 0; // 0 = semana atual
+let ocultarCliente = false;
+
+function getSegundaDaSemana(offset){
+  const hoje = new Date();
+  const dia = hoje.getDay();
+  const diasDesdeSegunda = (dia + 6) % 7;
+  const segunda = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() - diasDesdeSegunda + offset*7);
+  return segunda;
+}
+function toISO(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function fmtDiaLabel(d){
+  return d.toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'2-digit' });
+}
+function hojeISO(){ return toISO(new Date()); }
+
+function minutosParaHora(mins){
+  const h = Math.floor(mins/60), m = mins%60;
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+}
+function horaParaMinutos(hhmm){
+  const [h,m] = hhmm.split(':').map(Number);
+  return h*60+m;
+}
+
+function detectarConflito(recurso, data, hora, horaFim, idIgnorar){
+  const inicio = horaParaMinutos(hora);
+  const fim = horaParaMinutos(horaFim);
+  return reservas.find(r => {
+    if (r.id === idIgnorar) return false;
+    if (r.recurso !== recurso || r.data !== data) return false;
+    if (r.status === 'cancelado') return false;
+    const rInicio = horaParaMinutos(r.hora);
+    const rFim = horaParaMinutos(r.horaFim);
+    return inicio < rFim && fim > rInicio;
+  });
+}
+
+function duracaoMinutos(hora, horaFim){
+  const d = horaParaMinutos(horaFim) - horaParaMinutos(hora);
+  return d > 0 ? d : 0;
+}
+function formatarDuracao(mins){
+  if (!mins) return '';
+  const h = Math.floor(mins/60), m = mins%60;
+  if (h && m) return `${h}h${String(m).padStart(2,'0')}`;
+  if (h) return `${h}h`;
+  return `${m}min`;
+}
+
+function montarFiltros(){
+  const wrap = document.getElementById('filtrosRecurso');
+  const opcoes = [{k:'todos', label:'Todos', color:null}, {k:'stand', label:'Stand', color:'var(--bege-dk)'}, {k:'quadra', label:'Quadra', color:'var(--quadra)'}];
+  wrap.innerHTML = opcoes.map(o => `
+    <button class="filtro-chip ${filtroRecurso===o.k?'ativo':''}" onclick="setFiltro('${o.k}')">
+      ${o.color ? `<span class="dot" style="background:${o.color}"></span>` : ''}${o.label}
+    </button>`).join('');
+}
+function setFiltro(k){ filtroRecurso = k; render(); }
+
+function mudarSemana(delta){ semanaOffset += delta; render(); }
+
+function toggleOcultarCliente(){
+  ocultarCliente = !ocultarCliente;
+  const btn = document.getElementById('btnOcultarCliente');
+  btn.innerHTML = ocultarCliente
+    ? '<i class="ti ti-eye"></i> Mostrar cliente'
+    : '<i class="ti ti-eye-off"></i> Ocultar cliente';
+  btn.classList.toggle('ativo', ocultarCliente);
+  render();
+}
+
+function montarResumo(){
+  const semanaAtualSegunda = getSegundaDaSemana(0);
+  const semanaAtualDomingo = new Date(semanaAtualSegunda); semanaAtualDomingo.setDate(semanaAtualSegunda.getDate()+6);
+  const inicioISO = toISO(semanaAtualSegunda), fimISO = toISO(semanaAtualDomingo);
+
+  const daSemana = reservas.filter(r => r.data >= inicioISO && r.data <= fimISO && r.status !== 'cancelado');
+  const pendentes = reservas.filter(r => r.status === 'pendente').length;
+  const standCount = daSemana.filter(r => r.recurso === 'stand').length;
+  const quadraCount = daSemana.filter(r => r.recurso === 'quadra').length;
+
+  const cards = [
+    { k: 'Reservas essa semana', v: daSemana.length },
+    { k: 'Pendentes de confirmação', v: pendentes },
+    { k: 'Stand essa semana', v: standCount },
+    { k: 'Quadra essa semana', v: quadraCount }
+  ];
+  document.getElementById('resumoRow').innerHTML = cards.map(c => `
+    <div class="resumo-card"><div class="k">${c.k}</div><div class="v">${c.v}</div></div>
+  `).join('');
+}
+
+function render(){
+  montarFiltros();
+  montarResumo();
+
+  const segunda = getSegundaDaSemana(semanaOffset);
+  const domingo = new Date(segunda); domingo.setDate(segunda.getDate()+6);
+  document.getElementById('semanaLabel').textContent =
+    segunda.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}) + ' – ' + domingo.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
+
+  const dias = [];
+  for (let i=0;i<7;i++){ const d = new Date(segunda); d.setDate(segunda.getDate()+i); dias.push(d); }
+
+  const lista = document.getElementById('agendaLista');
+
+  if (carregandoReservas){
+    lista.innerHTML = `<div class="vazio"><i class="ti ti-loader-2"></i><p>Carregando reservas da planilha...</p></div>`;
+    return;
+  }
+
+  const hoje = hojeISO();
+  let html = '';
+  let algumaReserva = false;
+
+  dias.forEach(d => {
+    const iso = toISO(d);
+    let doDia = reservas.filter(r => r.data === iso);
+    if (filtroRecurso !== 'todos') doDia = doDia.filter(r => r.recurso === filtroRecurso);
+    doDia.sort((a,b) => a.hora.localeCompare(b.hora));
+    if (!doDia.length) return;
+    algumaReserva = true;
+
+    html += `<div class="dia-grupo">
+      <div class="dia-header">
+        <span>${fmtDiaLabel(d)}</span>
+        ${iso===hoje ? '<span class="hoje-tag">HOJE</span>' : ''}
+      </div>`;
+    doDia.forEach(r => {
+      const rec = RECURSOS[r.recurso];
+      const statusLabel = { confirmado:'Confirmado', pendente:'Pendente', cancelado:'Cancelado' }[r.status];
+      const statusClass = { confirmado:'status-confirmado', pendente:'status-pendente', cancelado:'status-cancelado-pill' }[r.status];
+      const tipoInfo = r.tipo ? TIPOS_STAND[r.tipo] : null;
+      html += `<div class="reserva-card recurso-${r.recurso} status-${r.status}" onclick="abrirModal('${r.id}')">
+        <div class="r-hora">${r.hora} – ${r.horaFim}<span class="r-duracao">${formatarDuracao(duracaoMinutos(r.hora, r.horaFim))}</span></div>
+        <div class="r-corpo">
+          <div class="r-titulo-row">
+            <span class="r-titulo">${r.responsavel || '(sem responsável informado)'}</span>
+            <span class="r-recurso-tag"><i class="ti ${rec.icon}"></i> ${rec.label}</span>
+            ${tipoInfo ? `<span class="r-tipo-tag">${tipoInfo.label}</span>` : ''}
+          </div>
+          <div class="r-cliente ${ocultarCliente ? 'oculto' : ''}"><i class="ti ti-user"></i> ${ocultarCliente ? 'Cliente oculto' : (r.cliente || '(sem cliente informado)')}</div>
+          ${r.obs ? `<div class="r-obs">${r.obs}</div>` : ''}
+        </div>
+        <span class="status-pill ${statusClass}">${statusLabel}</span>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  if (!algumaReserva){
+    html = `<div class="vazio"><i class="ti ti-calendar-off"></i><p>Nenhuma reserva nessa semana${filtroRecurso!=='todos' ? ' pra '+RECURSOS[filtroRecurso].label : ''}.</p></div>`;
+  }
+  lista.innerHTML = html;
+}
+
+// ═══ Modal ═══
+// O campo "Responsável" muda de nome/placeholder conforme o recurso e o tipo:
+//  - Quadra: "Corretor / Origem" (sem tipo)
+//  - Stand + Visita/Apresentação: "Gerente e Diretor"
+//  - Stand + Reunião: "Anfitrião"
+function atualizarCampoResponsavel(){
+  const recurso = document.getElementById('fRecurso').value;
+  const campoTipo = document.getElementById('campoTipo');
+  const label = document.getElementById('labelResponsavel');
+  const input = document.getElementById('fResponsavel');
+
+  if (recurso === 'quadra'){
+    campoTipo.classList.add('oculta');
+    label.textContent = 'Corretor / Origem';
+    input.placeholder = 'Ex: Ricardo Nunes / Sabatino';
+    return;
+  }
+
+  campoTipo.classList.remove('oculta');
+  const tipo = document.getElementById('fTipo').value;
+  if (tipo === 'reuniao'){
+    label.textContent = 'Anfitrião';
+    input.placeholder = 'Ex: Roberta Nunes';
+  } else {
+    label.textContent = 'Gerente e Diretor';
+    input.placeholder = 'Ex: Fulano (Gerente) e Beltrano (Diretor)';
+  }
+}
+
+function abrirModal(id){
+  const overlay = document.getElementById('overlay');
+  document.getElementById('conflitoAviso').classList.remove('mostrar');
+  if (id){
+    const r = reservas.find(x => x.id === id);
+    document.getElementById('modalTitulo').textContent = 'Editar Reserva';
+    document.getElementById('fId').value = r.id;
+    document.getElementById('fRecurso').value = r.recurso;
+    document.getElementById('fTipo').value = r.tipo || 'visita';
+    document.getElementById('fData').value = r.data;
+    document.getElementById('fHora').value = r.hora;
+    document.getElementById('fHoraFim').value = r.horaFim;
+    document.getElementById('fCliente').value = r.cliente;
+    document.getElementById('fResponsavel').value = r.responsavel;
+    document.getElementById('fObs').value = r.obs;
+    document.getElementById('fStatus').value = r.status;
+    document.getElementById('btnExcluir').style.display = 'flex';
+  } else {
+    document.getElementById('modalTitulo').textContent = 'Nova Reserva';
+    document.getElementById('fId').value = '';
+    document.getElementById('fRecurso').value = 'stand';
+    document.getElementById('fTipo').value = 'visita';
+    document.getElementById('fData').value = hojeISO();
+    document.getElementById('fHora').value = '10:00';
+    document.getElementById('fHoraFim').value = minutosParaHora(horaParaMinutos('10:00') + DURACAO_PADRAO.stand);
+    document.getElementById('fCliente').value = '';
+    document.getElementById('fResponsavel').value = '';
+    document.getElementById('fObs').value = '';
+    document.getElementById('fStatus').value = 'confirmado';
+    document.getElementById('btnExcluir').style.display = 'none';
+  }
+  atualizarCampoResponsavel();
+  overlay.classList.add('aberto');
+}
+function fecharModal(){ document.getElementById('overlay').classList.remove('aberto'); }
+
+async function salvarReserva(){
+  const id = document.getElementById('fId').value; // vazio = reserva nova (o backend gera o id)
+  const recurso = document.getElementById('fRecurso').value;
+  const tipo = recurso === 'stand' ? document.getElementById('fTipo').value : null;
+  const data = document.getElementById('fData').value;
+  const hora = document.getElementById('fHora').value;
+  const horaFim = document.getElementById('fHoraFim').value;
+  const cliente = document.getElementById('fCliente').value.trim();
+  const responsavel = document.getElementById('fResponsavel').value.trim();
+  const obs = document.getElementById('fObs').value.trim();
+  const status = document.getElementById('fStatus').value;
+
+  document.getElementById('conflitoAviso').classList.remove('mostrar');
+
+  if (!data || !hora || !horaFim){ mostrarToast('Preencha data, horário de início e horário de término.'); return; }
+  if (horaParaMinutos(horaFim) <= horaParaMinutos(hora)){ mostrarToast('O horário até deve ser depois do horário de.'); return; }
+
+  // Bloqueio na tela pra resposta imediata — o servidor confere o conflito de novo
+  // (protege contra duas pessoas mexendo ao mesmo tempo pelo link separado).
+  const conflitoLocal = (status !== 'cancelado') ? detectarConflito(recurso, data, hora, horaFim, id) : null;
+  if (conflitoLocal){
+    document.getElementById('conflitoTexto').textContent =
+      `Já existe uma reserva do ${RECURSOS[recurso].label} nesse horário: ${conflitoLocal.hora} – ${conflitoLocal.horaFim} — ${conflitoLocal.cliente || '(sem cliente)'}. Escolha outro horário para salvar.`;
+    document.getElementById('conflitoAviso').classList.add('mostrar');
+    return;
+  }
+
+  const usuario = localStorage.getItem(LOGIN_STORAGE_KEY) || 'desconhecido';
+  const payload = { action: id ? 'updateReserva' : 'createReserva', recurso, tipo, data, hora, horaFim, cliente, responsavel, obs, status, usuario };
+  if (id) payload.id = id;
+
+  const btn = document.getElementById('btnSalvar');
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+  try{
+    const resp = await fetch(AGENDA_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // evita preflight CORS no Apps Script
+      body: JSON.stringify(payload)
+    });
+    const result = await resp.json();
+
+    if (result && result.status === 'conflito'){
+      document.getElementById('conflitoTexto').textContent = result.message || 'Horário indisponível.';
+      document.getElementById('conflitoAviso').classList.add('mostrar');
+      return;
+    }
+    if (!result || result.status !== 'success'){
+      mostrarToast((result && result.message) || 'Não foi possível salvar. Tente de novo.');
+      return;
+    }
+
+    fecharModal();
+    await carregarReservas();
+    mostrarToast(id ? 'Reserva atualizada.' : 'Reserva criada.');
+  } catch(e){
+    console.error(e);
+    mostrarToast('Erro de conexão ao salvar. Verifique sua internet e tente de novo.');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="ti ti-check"></i> Salvar';
+  }
+}
+
+async function excluirReserva(){
+  const id = document.getElementById('fId').value;
+  if (!id) return;
+  const usuario = localStorage.getItem(LOGIN_STORAGE_KEY) || 'desconhecido';
+  try{
+    const resp = await fetch(AGENDA_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'deleteReserva', id, usuario })
+    });
+    const result = await resp.json();
+    if (!result || result.status !== 'success'){
+      mostrarToast((result && result.message) || 'Não foi possível excluir. Tente de novo.');
+      return;
+    }
+    fecharModal();
+    await carregarReservas();
+    mostrarToast('Reserva excluída.');
+  } catch(e){
+    console.error(e);
+    mostrarToast('Erro de conexão ao excluir. Verifique sua internet e tente de novo.');
+  }
+}
+
+let toastTimer = null;
+function mostrarToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('mostrar');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('mostrar'), 2500);
+}
+
+document.getElementById('overlay').addEventListener('click', e => { if (e.target.id === 'overlay') fecharModal(); });
+
+// Sugere a duração padrão do recurso (Quadra 60min / Stand 120min) só em reservas
+// NOVAS — ao editar uma reserva existente, o horário já salvo não é mexido sozinho.
+function aplicarDuracaoPadrao(){
+  const recurso = document.getElementById('fRecurso').value;
+  const hora = document.getElementById('fHora').value;
+  if (!hora) return;
+  document.getElementById('fHoraFim').value = minutosParaHora(horaParaMinutos(hora) + (DURACAO_PADRAO[recurso] || 60));
+}
+document.getElementById('fRecurso').addEventListener('change', () => {
+  if (!document.getElementById('fId').value) aplicarDuracaoPadrao();
+  atualizarCampoResponsavel();
+});
+document.getElementById('fHora').addEventListener('change', () => { if (!document.getElementById('fId').value) aplicarDuracaoPadrao(); });
+document.getElementById('fTipo').addEventListener('change', atualizarCampoResponsavel);
+
+// ═══ Gate de login ═══
+if (localStorage.getItem(LOGIN_STORAGE_KEY)) {
+  liberarAcessoPosLogin();
+}
+render();
+</script>
+</body>
+</html>
