@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root{
     --verde: #13291F;
@@ -130,6 +131,25 @@
   .toast.mostrar{opacity:1;}
 
   .nota-prototipo{background:var(--surface2);border:1px dashed var(--border2);border-radius:10px;padding:0.8rem 1rem;font-size:0.78rem;color:var(--text-muted);margin-bottom:1.25rem;}
+
+  /* Exportar disponibilidade (imagem) */
+  .export-render{position:absolute;left:-9999px;top:0;background:#fff;padding:2rem;width:900px;font-family:'Inter',system-ui,sans-serif;}
+  .export-header{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.3rem;}
+  .export-header .yuny{font-weight:700;font-size:1.2rem;color:var(--verde-dk);}
+  .export-header .divider{width:1px;height:18px;background:var(--border2);}
+  .export-header .titulo{font-size:1rem;color:var(--text-muted);}
+  .export-subtitulo{font-size:0.9rem;color:var(--text-muted);margin-bottom:1.4rem;}
+  .export-secao{margin-bottom:1.6rem;}
+  .export-secao-titulo{font-size:0.98rem;font-weight:700;color:var(--verde-dk);margin-bottom:0.6rem;}
+  .export-tabela{width:100%;border-collapse:collapse;}
+  .export-tabela th{font-size:0.68rem;text-transform:uppercase;color:var(--text-muted);padding:0.4rem;text-align:center;font-weight:600;}
+  .export-dia-label{font-size:0.78rem;font-weight:700;color:var(--verde-dk);text-align:left;padding:0.4rem 0.7rem 0.4rem 0;white-space:nowrap;}
+  .export-bloco{border-radius:8px;padding:0.55rem 0.3rem;text-align:center;font-size:0.72rem;font-weight:700;}
+  .export-bloco.livre{background:rgba(21,128,61,0.12);color:var(--ok);border:1px solid rgba(21,128,61,0.3);}
+  .export-bloco.ocupado{background:rgba(185,28,28,0.10);color:#B91C1C;border:1px solid rgba(185,28,28,0.3);}
+  .export-legenda{display:flex;gap:1.2rem;margin-top:0.8rem;font-size:0.78rem;color:var(--text-muted);align-items:center;}
+  .export-legenda .quad{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:0.35rem;vertical-align:middle;}
+  .export-rodape{margin-top:1.4rem;font-size:0.68rem;color:var(--text-muted);text-align:right;}
 </style>
 </head>
 <body>
@@ -142,7 +162,7 @@
       <span class="titulo">Quaddra Jesuíno — Agenda</span>
     </div>
     <h1>Entrar</h1>
-    <p>Acesso restrito. Use seu usuário e senha (Caso não possua, solicite ao Castro.</p>
+    <p>Acesso restrito. Use o mesmo usuário e senha do backoffice.</p>
     <div id="loginErro" class="login-erro" style="display:none"></div>
     <div class="field">
       <label>Usuário</label>
@@ -173,7 +193,7 @@
 
 <main>
   <div class="nota-prototipo">
-    <i class="ti ti-info-circle"></i> Todas alterações serão salvas com o log do seu usuário.
+    <i class="ti ti-info-circle"></i> Essa agenda já salva de verdade na planilha AGENDAJESUINO. Por enquanto ela funciona como página separada — ainda não está integrada ao site principal dos Quaddras.
   </div>
 
   <div class="resumo-row" id="resumoRow"></div>
@@ -187,6 +207,7 @@
     <div class="filtros" id="filtrosRecurso"></div>
     <div style="display:flex;gap:0.5rem;">
       <button class="btn btn-ghost" id="btnOcultarCliente" onclick="toggleOcultarCliente()"><i class="ti ti-eye-off"></i> Ocultar cliente</button>
+      <button class="btn btn-ghost" onclick="abrirModalExport()"><i class="ti ti-photo"></i> Exportar</button>
       <button class="btn btn-primary" onclick="abrirModal()"><i class="ti ti-plus"></i> Nova Reserva</button>
     </div>
   </div>
@@ -259,6 +280,20 @@
         <button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>
         <button class="btn btn-primary" id="btnSalvar" onclick="salvarReserva()"><i class="ti ti-check"></i> Salvar</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlayExport">
+  <div class="modal" style="max-width:400px;">
+    <h2>Exportar disponibilidade</h2>
+    <p style="font-size:0.85rem;color:var(--text-muted);margin:-0.6rem 0 1.2rem;">
+      Gera uma imagem com blocos de 2 em 2 horas (08h–20h), mostrando só Livre/Ocupado — sem nome de cliente. Recurso considerado: <b id="exportRecursoLabel"></b> (o mesmo filtro que está ativo na tela).
+    </p>
+    <div style="display:flex;flex-direction:column;gap:0.6rem;">
+      <button class="btn btn-primary" style="justify-content:center;" onclick="exportarDisponibilidade('dia')"><i class="ti ti-calendar-event"></i> Exportar o dia de hoje</button>
+      <button class="btn btn-primary" style="justify-content:center;" onclick="exportarDisponibilidade('semana')"><i class="ti ti-calendar"></i> Exportar a semana que está na tela</button>
+      <button class="btn btn-ghost" style="justify-content:center;" onclick="fecharModalExport()">Cancelar</button>
     </div>
   </div>
 </div>
@@ -683,6 +718,120 @@ async function excluirReserva(){
   } catch(e){
     console.error(e);
     mostrarToast('Erro de conexão ao excluir. Verifique sua internet e tente de novo.');
+  }
+}
+
+// ═══ Exportar disponibilidade (imagem) ═══
+// Blocos fixos de 2 em 2 horas, cobrindo o horário comercial estendido (08h–20h).
+// Ajustável aqui se o horário de funcionamento do stand for diferente.
+const BLOCOS_EXPORT = [
+  { inicio:'08:00', fim:'10:00' },
+  { inicio:'10:00', fim:'12:00' },
+  { inicio:'12:00', fim:'14:00' },
+  { inicio:'14:00', fim:'16:00' },
+  { inicio:'16:00', fim:'18:00' },
+  { inicio:'18:00', fim:'20:00' }
+];
+
+// Um bloco conta como ocupado se QUALQUER reserva (não cancelada) daquele
+// recurso, naquele dia, encostar nele — mesmo que só parcialmente.
+function blocoOcupado(recurso, dataISO, bloco){
+  const inicio = horaParaMinutos(bloco.inicio), fim = horaParaMinutos(bloco.fim);
+  return reservas.some(r => {
+    if (r.recurso !== recurso || r.data !== dataISO) return false;
+    if (r.status === 'cancelado') return false;
+    const rInicio = horaParaMinutos(r.hora), rFim = horaParaMinutos(r.horaFim);
+    return inicio < rFim && fim > rInicio;
+  });
+}
+
+function abrirModalExport(){
+  document.getElementById('exportRecursoLabel').textContent =
+    filtroRecurso === 'todos' ? 'Stand e Quadra de Tênis' : RECURSOS[filtroRecurso].label;
+  document.getElementById('overlayExport').classList.add('aberto');
+}
+function fecharModalExport(){ document.getElementById('overlayExport').classList.remove('aberto'); }
+
+async function exportarDisponibilidade(escopo){
+  fecharModalExport();
+
+  if (typeof html2canvas === 'undefined'){
+    mostrarToast('Não foi possível carregar o gerador de imagem. Verifique sua internet e tente de novo.');
+    return;
+  }
+  mostrarToast('Gerando imagem...');
+
+  let dias;
+  if (escopo === 'dia'){
+    dias = [new Date()];
+  } else {
+    const segunda = getSegundaDaSemana(semanaOffset);
+    dias = [];
+    for (let i = 0; i < 7; i++){ const d = new Date(segunda); d.setDate(segunda.getDate() + i); dias.push(d); }
+  }
+
+  const recursosParaExportar = filtroRecurso === 'todos' ? ['stand', 'quadra'] : [filtroRecurso];
+
+  const tituloPeriodo = escopo === 'dia'
+    ? dias[0].toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'2-digit', year:'numeric' })
+    : `Semana de ${dias[0].toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})} a ${dias[6].toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})}`;
+
+  let html = `
+    <div class="export-header">
+      <span class="yuny">yuny</span>
+      <div class="divider"></div>
+      <span class="titulo">Quaddra Jesuíno — Disponibilidade</span>
+    </div>
+    <div class="export-subtitulo" style="text-transform:capitalize;">${tituloPeriodo}</div>
+  `;
+
+  recursosParaExportar.forEach(rec => {
+    html += `<div class="export-secao">
+      <div class="export-secao-titulo">${RECURSOS[rec].label}</div>
+      <table class="export-tabela">
+        <thead><tr><th></th>${BLOCOS_EXPORT.map(b => `<th>${b.inicio}–${b.fim}</th>`).join('')}</tr></thead>
+        <tbody>
+          ${dias.map(d => {
+            const iso = toISO(d);
+            const label = escopo === 'dia' ? 'Hoje' : d.toLocaleDateString('pt-BR', { weekday:'short', day:'2-digit', month:'2-digit' });
+            return `<tr>
+              <td class="export-dia-label" style="text-transform:capitalize;">${label}</td>
+              ${BLOCOS_EXPORT.map(b => {
+                const ocupado = blocoOcupado(rec, iso, b);
+                return `<td><div class="export-bloco ${ocupado ? 'ocupado' : 'livre'}">${ocupado ? 'Ocupado' : 'Livre'}</div></td>`;
+              }).join('')}
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  });
+
+  html += `
+    <div class="export-legenda">
+      <span><span class="quad" style="background:var(--ok);"></span>Livre</span>
+      <span><span class="quad" style="background:#B91C1C;"></span>Ocupado</span>
+    </div>
+    <div class="export-rodape">Gerado em ${new Date().toLocaleString('pt-BR')}</div>
+  `;
+
+  const container = document.createElement('div');
+  container.className = 'export-render';
+  container.innerHTML = html;
+  document.body.appendChild(container);
+
+  try{
+    const canvas = await html2canvas(container, { backgroundColor: '#ffffff', scale: 2 });
+    const link = document.createElement('a');
+    link.download = `disponibilidade_${filtroRecurso}_${escopo}_${hojeISO()}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    mostrarToast('Imagem exportada.');
+  } catch(e){
+    console.error(e);
+    mostrarToast('Não foi possível gerar a imagem.');
+  } finally {
+    document.body.removeChild(container);
   }
 }
 
