@@ -278,14 +278,14 @@
       </div>
       <div class="field">
         <label>Cliente(s) / Participantes</label>
-        <input type="text" id="sCliente" placeholder="Ex: Nome do Cliente e Nome do Cliente">
+        <input type="text" id="sCliente" placeholder="Ex: Nome dos Clientes">
       </div>
       <div class="field">
         <label id="sLabelResponsavel">Gerente e Diretor</label>
         <input type="text" id="sResponsavel" placeholder="Ex: Fulano (Gerente) e Beltrano (Diretor)">
       </div>
       <div class="field">
-        <label>Telefone / WhatsApp </label>
+        <label>Telefone / WhatsApp (opcional)</label>
         <input type="text" id="sTelefone" placeholder="(11) 99999-9999">
       </div>
       <div class="field">
@@ -293,9 +293,9 @@
         <input type="email" id="sEmailCliente" placeholder="cliente@email.com">
       </div>
       <div class="field">
-        <label>E-mail da equipe</label>
+        <label>E-mail da equipe (opcional)</label>
         <input type="email" id="sEmailEquipe" placeholder="equipe@yuny.com.br">
-        <div class="campo-nota">Usado para confirmar a reserva e, futuramente, enviar o convite automático de agenda.</div>
+        <div class="campo-nota">Usado para confirmar a reserva. Se aprovada, o convite de calendário é enviado automaticamente pra esse(s) e-mail(s).</div>
       </div>
       <div class="field">
         <label>Observação (opcional)</label>
@@ -387,11 +387,11 @@
     </div>
     <div class="field">
       <label>Cliente(s) / Participantes</label>
-      <input type="text" id="fCliente" placeholder="Ex: Cliente e Cliente">
+      <input type="text" id="fCliente" placeholder="Ex: Nome dos clientes">
     </div>
     <div class="field">
       <label id="labelResponsavel">Corretor / Origem</label>
-      <input type="text" id="fResponsavel" placeholder="Ex: Corretor / Diretor">
+      <input type="text" id="fResponsavel" placeholder="Ex: jose silva / Joao">
     </div>
     <div class="field">
       <label>Observações</label>
@@ -399,8 +399,9 @@
     </div>
     <div class="field">
       <label>E-mail (convite)</label>
-      <input type="email" id="fEmail" placeholder="Ex: cliente@email.com">
-      <div class="campo-nota">Opcional. Guardado para uso futuro de convite automático de agenda.</div>
+      <input type="email" id="fEmail" placeholder="Ex: cliente@email.com. Pode ser mais de um, separado por vírgula">
+      <div class="campo-nota">Opcional. Quando a reserva estiver Confirmada, o convite de calendário é enviado automaticamente pra esse(s) e-mail(s).</div>
+      <div class="campo-nota" id="fConviteStatus" style="display:none;"></div>
     </div>
     <div class="field">
       <label>Status</label>
@@ -558,7 +559,7 @@ function abrirModalSolicitar(){
     </div>
     <div class="field">
       <label>Cliente(s) / Participantes</label>
-      <input type="text" id="sCliente" placeholder="Ex: Cliente e Cliente">
+      <input type="text" id="sCliente" placeholder="Ex: Nome dos clientes">
     </div>
     <div class="field">
       <label id="sLabelResponsavel">Gerente e Diretor</label>
@@ -575,7 +576,7 @@ function abrirModalSolicitar(){
     <div class="field">
       <label>E-mail da equipe (opcional)</label>
       <input type="email" id="sEmailEquipe" placeholder="equipe@yuny.com.br">
-      <div class="campo-nota">Usado para confirmar a reserva e, futuramente, enviar o convite automático de agenda.</div>
+      <div class="campo-nota">Usado para confirmar a reserva. Se aprovada, o convite de calendário é enviado automaticamente pra esse(s) e-mail(s).</div>
     </div>
     <div class="field">
       <label>Observação (opcional)</label>
@@ -940,6 +941,7 @@ function render(){
             <span class="r-titulo">${r.responsavel || '(sem responsável informado)'}</span>
             <span class="r-recurso-tag"><i class="ti ${rec.icon}"></i> ${rec.label}</span>
             ${tipoInfo ? `<span class="r-tipo-tag">${tipoInfo.label}</span>` : ''}
+            ${r.conviteEnviado ? `<span class="r-tipo-tag" style="color:var(--ok);border-color:rgba(21,128,61,0.3);" title="Convite de calendário enviado"><i class="ti ti-calendar-check"></i> Convite enviado</span>` : ''}
           </div>
           <div class="r-cliente ${ocultarCliente ? 'oculto' : ''}"><i class="ti ti-user"></i> ${ocultarCliente ? 'Cliente oculto' : (r.cliente || '(sem cliente informado)')}</div>
           ${r.obs ? `<div class="r-obs">${r.obs}</div>` : ''}
@@ -970,7 +972,7 @@ function atualizarCampoResponsavel(){
   if (recurso === 'quadra'){
     campoTipo.classList.add('oculta');
     label.textContent = 'Corretor / Origem';
-    input.placeholder = 'Ex: Corretor / Gerente';
+    input.placeholder = 'Ex: Jose silva / Joao';
     return;
   }
 
@@ -1003,6 +1005,18 @@ function abrirModal(id){
     document.getElementById('fEmail').value = r.email || '';
     document.getElementById('fStatus').value = r.status;
     document.getElementById('btnExcluir').style.display = 'flex';
+    const conviteStatus = document.getElementById('fConviteStatus');
+    if (r.conviteEnviado){
+      conviteStatus.textContent = '✓ Convite de calendário já enviado pra esse(s) e-mail(s).';
+      conviteStatus.style.color = 'var(--ok)';
+      conviteStatus.style.display = 'block';
+    } else if (r.status === 'confirmado' && r.email){
+      conviteStatus.textContent = 'Confirmada com e-mail preenchido, mas o convite ainda não foi enviado — salve de novo pra disparar.';
+      conviteStatus.style.color = 'var(--pendente)';
+      conviteStatus.style.display = 'block';
+    } else {
+      conviteStatus.style.display = 'none';
+    }
   } else {
     document.getElementById('modalTitulo').textContent = 'Nova Reserva';
     document.getElementById('fId').value = '';
@@ -1017,6 +1031,7 @@ function abrirModal(id){
     document.getElementById('fEmail').value = '';
     document.getElementById('fStatus').value = 'confirmado';
     document.getElementById('btnExcluir').style.display = 'none';
+    document.getElementById('fConviteStatus').style.display = 'none';
   }
   atualizarCampoResponsavel();
   overlay.classList.add('aberto');
@@ -1078,7 +1093,11 @@ async function salvarReserva(){
 
     fecharModal();
     await carregarReservas();
-    mostrarToast(id ? 'Reserva atualizada.' : 'Reserva criada.');
+    if (result.avisoCalendario){
+      mostrarToast(result.avisoCalendario, 7000);
+    } else {
+      mostrarToast(id ? 'Reserva atualizada.' : 'Reserva criada.');
+    }
   } catch(e){
     console.error(e);
     mostrarToast('Erro de conexão ao salvar. Verifique sua internet e tente de novo.');
@@ -1227,12 +1246,12 @@ async function exportarDisponibilidade(escopo){
 }
 
 let toastTimer = null;
-function mostrarToast(msg){
+function mostrarToast(msg, duracaoMs){
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('mostrar');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('mostrar'), 2500);
+  toastTimer = setTimeout(() => t.classList.remove('mostrar'), duracaoMs || 2500);
 }
 
 document.getElementById('overlay').addEventListener('click', e => { if (e.target.id === 'overlay') fecharModal(); });
