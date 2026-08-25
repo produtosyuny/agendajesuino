@@ -387,11 +387,11 @@
     </div>
     <div class="field">
       <label>Cliente(s) / Participantes</label>
-      <input type="text" id="fCliente" placeholder="Ex: Carolina Gueogjian e Kleber Gueogjian">
+      <input type="text" id="fCliente" placeholder="Ex: Cliente e Cliente">
     </div>
     <div class="field">
       <label id="labelResponsavel">Corretor / Origem</label>
-      <input type="text" id="fResponsavel" placeholder="Ex: Ricardo Nunes / Sabatino">
+      <input type="text" id="fResponsavel" placeholder="Ex: Corretor / Diretor">
     </div>
     <div class="field">
       <label>Observações</label>
@@ -558,7 +558,7 @@ function abrirModalSolicitar(){
     </div>
     <div class="field">
       <label>Cliente(s) / Participantes</label>
-      <input type="text" id="sCliente" placeholder="Ex: Carolina Gueogjian e Kleber Gueogjian">
+      <input type="text" id="sCliente" placeholder="Ex: Cliente e Cliente">
     </div>
     <div class="field">
       <label id="sLabelResponsavel">Gerente e Diretor</label>
@@ -970,7 +970,7 @@ function atualizarCampoResponsavel(){
   if (recurso === 'quadra'){
     campoTipo.classList.add('oculta');
     label.textContent = 'Corretor / Origem';
-    input.placeholder = 'Ex: Ricardo Nunes / Sabatino';
+    input.placeholder = 'Ex: Corretor / Gerente';
     return;
   }
 
