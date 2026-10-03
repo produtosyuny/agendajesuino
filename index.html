@@ -36,6 +36,8 @@
   #telaLogin{min-height:100%;display:flex;align-items:flex-start;justify-content:center;background:var(--verde);padding:2.5rem 1.5rem;flex:1;overflow-y:auto;}
   .tela-publica-wrap{display:grid;grid-template-columns:1.5fr 1fr;gap:1.5rem;width:100%;max-width:980px;align-items:start;}
   @media (max-width:820px){ .tela-publica-wrap{grid-template-columns:1fr;} }
+  .tela-publica-wrap > *{min-width:0;}
+  @media (max-width:480px){ #telaLogin{padding:1.5rem 0.75rem;} .disp-card{padding:1.25rem 1rem;} }
 
   .login-card{background:var(--surface);border-radius:16px;padding:2rem;width:100%;box-shadow:0 10px 40px rgba(0,0,0,0.25);}
   .login-brand{display:flex;align-items:center;gap:0.6rem;margin-bottom:1.4rem;}
@@ -65,6 +67,26 @@
   .disp-tabela td{padding:0.2rem;}
   .disp-legenda{display:flex;gap:1rem;margin-top:0.85rem;font-size:0.74rem;color:var(--text-muted);align-items:center;justify-content:center;}
   .disp-legenda .quad{width:9px;height:9px;border-radius:3px;display:inline-block;margin-right:0.3rem;vertical-align:middle;}
+  /* Alternância Stand | Quadra na página pública */
+  .disp-recurso-toggle{display:grid;grid-template-columns:1fr 1fr;gap:0.3rem;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:0.3rem;margin-bottom:0.75rem;}
+  .disp-recurso-toggle button{border:none;background:none;border-radius:8px;padding:0.5rem 0.6rem;font-family:inherit;font-size:0.82rem;font-weight:600;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.35rem;}
+  .disp-recurso-toggle button.ativo{background:var(--verde);color:#fff;}
+  .disp-recurso-toggle button:not(.ativo):hover{background:var(--surface);}
+
+  /* Quadra: eixo invertido — horários nas linhas, dias nas colunas */
+  .disp-tabela.quadra{min-width:0;table-layout:fixed;}
+  .disp-tabela.quadra th{text-transform:capitalize;line-height:1.25;}
+  .disp-tabela.quadra th.hoje{color:var(--verde-dk);}
+  .disp-tabela.quadra th.hoje span{display:inline-block;background:var(--bege);border-radius:6px;padding:0.1rem 0.35rem;}
+  .disp-tabela.quadra .disp-hora-label{font-size:0.66rem;font-weight:700;color:var(--verde-dk);text-align:left;padding:0.15rem 0.3rem 0.15rem 0;white-space:nowrap;}
+  @media (max-width:480px){
+    .disp-tabela.quadra .disp-bloco{font-size:0.52rem;letter-spacing:-0.01em;padding:0.32rem 0;}
+    .disp-tabela.quadra .hora-fim{display:none;}
+    .disp-tabela.quadra th:first-child{width:30px !important;}
+  }
+  .disp-tabela.quadra td{padding:0.12rem;}
+  .disp-tabela.quadra .disp-bloco{padding:0.32rem 0.1rem;font-size:0.6rem;}
+
   .disp-carregando, .disp-erro{text-align:center;padding:2rem 1rem;color:var(--text-muted);font-size:0.85rem;}
   .disp-erro{color:#B91C1C;}
 
@@ -160,6 +182,16 @@
   .modal-actions .esquerda{display:flex;gap:0.5rem;}
   .conflito-aviso{background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.25);color:#B91C1C;font-size:0.8rem;padding:0.6rem 0.8rem;border-radius:8px;margin-bottom:0.9rem;display:none;align-items:flex-start;gap:0.5rem;}
   .conflito-aviso.mostrar{display:flex;}
+  /* Reserva semanal */
+  .field label.check-row, .check-row{display:flex;align-items:center;gap:0.5rem;font-size:0.86rem;font-weight:600;color:var(--text);cursor:pointer;text-transform:none;letter-spacing:0;}
+  .check-row input{width:16px;height:16px;accent-color:var(--verde);margin:0;}
+  .serie-box{background:rgba(201,161,132,0.14);border:1px solid rgba(168,129,95,0.35);border-radius:10px;padding:0.75rem 0.85rem;margin-bottom:1rem;font-size:0.8rem;color:var(--verde-dk);}
+  .serie-box .serie-titulo{font-weight:700;display:flex;align-items:center;gap:0.35rem;margin-bottom:0.2rem;}
+  .serie-box .serie-desc{color:var(--text-muted);margin-bottom:0.6rem;}
+  .serie-box .serie-acoes{display:flex;gap:0.5rem;flex-wrap:wrap;}
+  .serie-box .btn{padding:0.45rem 0.75rem;font-size:0.78rem;}
+  .r-serie-tag{color:var(--bege-dk) !important;border-color:rgba(168,129,95,0.4) !important;}
+
   .btn-excluir{background:none;border:none;color:#B91C1C;font-size:0.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:0.3rem;}
 
   .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--verde-dk);color:#fff;padding:0.7rem 1.2rem;border-radius:10px;font-size:0.85rem;font-weight:500;opacity:0;pointer-events:none;transition:opacity 0.2s;z-index:100;}
@@ -196,10 +228,15 @@
       <div class="login-brand">
         <span class="yuny">yuny</span>
         <div class="divider"></div>
-        <span class="titulo">Quaddra Jesuíno — Stand</span>
+        <span class="titulo">Quaddra Jesuíno — Disponibilidade</span>
       </div>
-      <h1>Disponibilidade do Stand</h1>
-      <p>Consulta pública, sem necessidade de login — mostra só livre/ocupado, em blocos de 2 em 2 horas, sem nenhum dado de cliente.</p>
+      <h1 id="dispTitulo">Disponibilidade do Stand</h1>
+      <p id="dispDescricao">Consulta pública, sem necessidade de login — mostra só livre/ocupado, em blocos de 2 em 2 horas, sem nenhum dado de cliente.</p>
+
+      <div class="disp-recurso-toggle" role="tablist">
+        <button id="dispBtnStand" class="ativo" onclick="setRecursoPublico('stand')"><i class="ti ti-building-store"></i> Stand</button>
+        <button id="dispBtnQuadra" onclick="setRecursoPublico('quadra')"><i class="ti ti-ball-tennis"></i> Quadra de Tênis</button>
+      </div>
 
       <div class="disp-semana-nav">
         <button onclick="mudarSemanaPublica(-1)" aria-label="Semana anterior"><i class="ti ti-chevron-left"></i></button>
@@ -216,7 +253,7 @@
         <span><span class="quad" style="background:#B91C1C;"></span>Ocupado</span>
       </div>
 
-      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:1.1rem;" onclick="abrirModalSolicitar()"><i class="ti ti-calendar-plus"></i> Solicitar reserva do Stand</button>
+      <button class="btn btn-primary" id="dispBtnSolicitar" style="width:100%;justify-content:center;margin-top:1.1rem;" onclick="abrirModalSolicitar()"><i class="ti ti-calendar-plus"></i> Solicitar reserva do Stand</button>
     </div>
 
     <div class="login-card">
@@ -244,68 +281,7 @@
 
 <div class="overlay" id="overlaySolicitar">
   <div class="modal" style="max-width:460px;">
-    <div id="solicitarConteudo">
-      <h2>Solicitar reserva do Stand</h2>
-      <p style="font-size:0.82rem;color:var(--text-muted);margin:-0.6rem 0 1.1rem;">
-        Preencha os dados abaixo. A reserva fica <b>pendente</b> até a nossa equipe confirmar com você.
-        <b>Isso não substitui o envio da solicitação por e-mail para o Pedro Yunes</b> — continue enviando também por lá.
-      </p>
-      <div class="aviso-mole" id="avisoMole">
-        <i class="ti ti-alert-triangle"></i>
-        <span>Esse horário já pode estar ocupado. Você ainda pode enviar — nossa equipe confere e confirma com você.</span>
-      </div>
-      <div class="field">
-        <label>Motivo</label>
-        <select id="sTipo">
-          <option value="visita">Visita</option>
-          <option value="apresentacao">Apresentação</option>
-          <option value="reuniao">Reunião</option>
-        </select>
-      </div>
-      <div class="row2">
-        <div class="field">
-          <label>Data</label>
-          <input type="date" id="sData">
-        </div>
-        <div class="field">
-          <label>Horário de</label>
-          <input type="time" id="sHora" value="10:00">
-        </div>
-      </div>
-      <div class="field">
-        <label>Horário até</label>
-        <input type="time" id="sHoraFim" value="12:00">
-      </div>
-      <div class="field">
-        <label>Cliente(s) / Participantes</label>
-        <input type="text" id="sCliente" placeholder="Ex: Nome dos Clientes">
-      </div>
-      <div class="field">
-        <label id="sLabelResponsavel">Gerente e Diretor</label>
-        <input type="text" id="sResponsavel" placeholder="Ex: Fulano (Gerente) e Beltrano (Diretor)">
-      </div>
-      <div class="field">
-        <label>Telefone / WhatsApp (opcional)</label>
-        <input type="text" id="sTelefone" placeholder="(11) 99999-9999">
-      </div>
-      <div class="field">
-        <label>E-mail do cliente (opcional)</label>
-        <input type="email" id="sEmailCliente" placeholder="cliente@email.com">
-      </div>
-      <div class="field">
-        <label>E-mail da equipe (opcional)</label>
-        <input type="email" id="sEmailEquipe" placeholder="equipe@yuny.com.br">
-        <div class="campo-nota">Usado para confirmar a reserva. Se aprovada, o convite de calendário é enviado automaticamente pra esse(s) e-mail(s).</div>
-      </div>
-      <div class="field">
-        <label>Observação (opcional)</label>
-        <textarea id="sObs" placeholder="Alguma informação adicional?"></textarea>
-      </div>
-      <div class="modal-actions" style="justify-content:flex-end;">
-        <button class="btn btn-ghost" onclick="fecharModalSolicitar()">Cancelar</button>
-        <button class="btn btn-primary" id="btnSolicitar" onclick="enviarSolicitacaoReserva()"><i class="ti ti-send"></i> Enviar solicitação</button>
-      </div>
-    </div>
+    <div id="solicitarConteudo"></div>
   </div>
 </div>
 
@@ -356,6 +332,15 @@
       <span id="conflitoTexto"></span>
     </div>
     <input type="hidden" id="fId">
+    <input type="hidden" id="fDataOcorrencia">
+    <div class="serie-box" id="serieBox" style="display:none;">
+      <div class="serie-titulo"><i class="ti ti-repeat"></i> <span id="serieTitulo"></span></div>
+      <div class="serie-desc" id="serieDesc"></div>
+      <div class="serie-acoes">
+        <button class="btn btn-ghost" id="btnPular" onclick="pularOcorrencia()"><i class="ti ti-calendar-minus"></i> <span id="btnPularTxt">Pular só esta semana</span></button>
+        <button class="btn btn-ghost" onclick="encerrarSerie()"><i class="ti ti-player-stop"></i> Encerrar série a partir desta semana</button>
+      </div>
+    </div>
     <div class="field">
       <label>Recurso</label>
       <select id="fRecurso">
@@ -373,7 +358,7 @@
     </div>
     <div class="row2">
       <div class="field">
-        <label>Data</label>
+        <label id="labelData">Data</label>
         <input type="date" id="fData">
       </div>
       <div class="field">
@@ -384,6 +369,14 @@
     <div class="field">
       <label>Horário até</label>
       <input type="time" id="fHoraFim">
+    </div>
+    <div class="field">
+      <label class="check-row"><input type="checkbox" id="fSemanal" onchange="atualizarCamposSemanal()"> Repetir toda semana neste horário</label>
+    </div>
+    <div class="field" id="campoAte" style="display:none;">
+      <label>Repetir até (opcional)</label>
+      <input type="date" id="fAte">
+      <div class="campo-nota">Deixe vazio para valer até alguém encerrar a série.</div>
     </div>
     <div class="field">
       <label>Cliente(s) / Participantes</label>
@@ -427,7 +420,7 @@
   <div class="modal" style="max-width:400px;">
     <h2>Exportar disponibilidade</h2>
     <p style="font-size:0.85rem;color:var(--text-muted);margin:-0.6rem 0 1.2rem;">
-      Gera uma imagem com blocos de 2 em 2 horas (08h–20h), mostrando só Livre/Ocupado — sem nome de cliente. Recurso considerado: <b id="exportRecursoLabel"></b> (o mesmo filtro que está ativo na tela).
+      Gera uma imagem mostrando só Livre/Ocupado — sem nome de cliente. Stand em blocos de 2h (08h–20h); Quadra em blocos de 1h (07h–22h). Recurso considerado: <b id="exportRecursoLabel"></b> (o mesmo filtro que está ativo na tela).
     </p>
     <div style="display:flex;flex-direction:column;gap:0.6rem;">
       <button class="btn btn-primary" style="justify-content:center;" onclick="exportarDisponibilidade('dia')"><i class="ti ti-calendar-event"></i> Exportar o dia de hoje</button>
@@ -443,13 +436,86 @@
 
 <script>
 // ═══════════════════════════════════════════════════════════════════
-//  DISPONIBILIDADE PÚBLICA DO STAND — roda na tela de login, sem precisar
-//  logar. Usa um endpoint separado (?action=disponibilidadePublica) que o
-//  próprio backend já filtra pra nunca mandar nome de cliente/responsável/
-//  observação — só data e horário, pra desenhar Livre/Ocupado.
+//  RESERVA SEMANAL — mesma regra do Apps Script. Uma linha da planilha
+//  com repetirSemanal guarda a REGRA (dia da semana de "data", até
+//  "repetirAte", menos "excecoes"); aqui ela vira uma ocorrência por semana
+//  só na hora de desenhar. Datas como dias UTC pra não sofrer com fuso.
+// ═══════════════════════════════════════════════════════════════════
+function diaUTCDe(iso){ const p = iso.split('-').map(Number); return Math.round(Date.UTC(p[0], p[1]-1, p[2]) / 86400000); }
+function isoDeDiaUTC(n){ const d = new Date(n*86400000); return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0'); }
+function fmtDM(iso){ const p = iso.split('-'); return p[2]+'/'+p[1]; }
+const DIAS_SEMANA = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+function diaSemanaDe(iso){ return DIAS_SEMANA[new Date(diaUTCDe(iso)*86400000).getUTCDay()]; }
+
+// Aceita o formato da área interna (repetirSemanal/repetirAte) e o público (semanal/ate).
+function regraDe(r){
+  return {
+    data: r.data,
+    semanal: !!(r.repetirSemanal || r.semanal),
+    ate: r.repetirAte || r.ate || '',
+    excecoes: r.excecoes || []
+  };
+}
+function ocorreEm(g, iso){
+  if (!g.semanal) return g.data === iso;
+  const n = diaUTCDe(iso), ini = diaUTCDe(g.data);
+  if (n < ini || (n - ini) % 7 !== 0) return false;
+  if (g.ate && iso > g.ate) return false;
+  return g.excecoes.indexOf(iso) === -1;
+}
+function primeiraDataComum(a, b){
+  if (!a.semanal) return ocorreEm(b, a.data) ? a.data : null;
+  if (!b.semanal) return ocorreEm(a, b.data) ? b.data : null;
+  const sa = diaUTCDe(a.data), sb = diaUTCDe(b.data);
+  if (Math.abs(sa - sb) % 7 !== 0) return null;
+  const ini = Math.max(sa, sb);
+  let fim = Math.min(a.ate ? diaUTCDe(a.ate) : Infinity, b.ate ? diaUTCDe(b.ate) : Infinity);
+  if (fim === Infinity) fim = ini + 7*104;
+  for (let d = ini; d <= fim; d += 7){
+    const iso = isoDeDiaUTC(d);
+    if (a.excecoes.indexOf(iso) === -1 && b.excecoes.indexOf(iso) === -1) return iso;
+  }
+  return null;
+}
+// Lista "achatada" com uma entrada por ocorrência entre inicioISO e fimISO.
+// Ocorrências de série trazem dataSerie (início da série) e ehOcorrenciaSerie.
+function expandirReservas(lista, inicioISO, fimISO){
+  const out = [];
+  lista.forEach(r => {
+    const g = regraDe(r);
+    if (!g.semanal){
+      if (r.data >= inicioISO && r.data <= fimISO) out.push(r);
+      return;
+    }
+    const ini = diaUTCDe(g.data), alvo = diaUTCDe(inicioISO);
+    let d = ini >= alvo ? ini : ini + Math.ceil((alvo - ini) / 7) * 7;
+    const limite = Math.min(diaUTCDe(fimISO), g.ate ? diaUTCDe(g.ate) : Infinity);
+    for (; d <= limite; d += 7){
+      const iso = isoDeDiaUTC(d);
+      if (g.excecoes.indexOf(iso) !== -1) continue;
+      out.push(Object.assign({}, r, { data: iso, dataSerie: r.data, ehOcorrenciaSerie: true }));
+    }
+  });
+  return out;
+}
+function descricaoSerie(r){
+  const g = regraDe(r);
+  return `Toda ${diaSemanaDe(g.data)}, ${r.hora}–${r.horaFim}, desde ${fmtDM(g.data)}` + (g.ate ? ` até ${fmtDM(g.ate)}` : ', sem data final');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  DISPONIBILIDADE PÚBLICA (Stand + Quadra) — roda na tela de login, sem
+//  precisar logar. Usa um endpoint separado (?action=disponibilidadePublica)
+//  que o próprio backend já filtra pra nunca mandar nome de cliente/
+//  responsável/observação — só recurso, data e horário, pra desenhar
+//  Livre/Ocupado.
+//   - Stand: dias nas linhas, blocos de 2h (08h–20h) nas colunas.
+//   - Quadra: eixo invertido — blocos de 1h (07h–22h) nas linhas, dias nas
+//     colunas, pra caber no celular sem rolagem lateral.
 // ═══════════════════════════════════════════════════════════════════
 let reservasPublicas = [];
 let semanaOffsetPublico = 0;
+let recursoPublico = 'stand';
 
 function getSegundaDaSemanaGenerica_(offset){
   const hoje = new Date();
@@ -462,10 +528,29 @@ function horaParaMinutosGenerico_(hhmm){ const [h,m] = hhmm.split(':').map(Numbe
 
 function mudarSemanaPublica(delta){ semanaOffsetPublico += delta; renderDisponibilidadePublica(); }
 
-function blocoOcupadoPublico_(dataISO, bloco){
-  const inicio = horaParaMinutosGenerico_(bloco.inicio), fim = horaParaMinutosGenerico_(bloco.fim);
-  return reservasPublicas.some(r => {
-    if (r.data !== dataISO) return false;
+function setRecursoPublico(rec){
+  recursoPublico = rec;
+  document.getElementById('dispBtnStand').classList.toggle('ativo', rec === 'stand');
+  document.getElementById('dispBtnQuadra').classList.toggle('ativo', rec === 'quadra');
+  const ehQuadra = rec === 'quadra';
+  document.getElementById('dispTitulo').textContent = ehQuadra ? 'Disponibilidade da Quadra de Tênis' : 'Disponibilidade do Stand';
+  document.getElementById('dispDescricao').textContent = ehQuadra
+    ? 'Consulta pública, sem necessidade de login — mostra só livre/ocupado, em blocos de 1 hora (07h–22h), sem nenhum dado de cliente.'
+    : 'Consulta pública, sem necessidade de login — mostra só livre/ocupado, em blocos de 2 em 2 horas, sem nenhum dado de cliente.';
+  document.getElementById('dispBtnSolicitar').innerHTML = '<i class="ti ti-calendar-plus"></i> ' +
+    (ehQuadra ? 'Solicitar reserva da Quadra' : 'Solicitar reserva do Stand');
+  renderDisponibilidadePublica();
+}
+
+// Reservas públicas de um recurso. Se o backend ainda for a versão antiga
+// (sem campo "recurso", só Stand), trata tudo como Stand — a página não quebra.
+function reservasPublicasDo_(recurso){
+  return reservasPublicas.filter(r => (r.recurso || 'stand') === recurso);
+}
+
+function intervaloOcupadoPublico_(recurso, dataISO, inicioHHmm, fimHHmm){
+  const inicio = horaParaMinutosGenerico_(inicioHHmm), fim = horaParaMinutosGenerico_(fimHHmm);
+  return expandirReservas(reservasPublicasDo_(recurso), dataISO, dataISO).some(r => {
     const rInicio = horaParaMinutosGenerico_(r.hora), rFim = horaParaMinutosGenerico_(r.horaFim);
     return inicio < rFim && fim > rInicio;
   });
@@ -500,16 +585,32 @@ function renderDisponibilidadePublica(){
   const dias = [];
   for (let i=0;i<7;i++){ const d = new Date(segunda); d.setDate(segunda.getDate()+i); dias.push(d); }
 
-  let html = '<table class="disp-tabela"><thead><tr><th></th>' + BLOCOS_EXPORT.map(b => `<th>${b.inicio}–${b.fim}</th>`).join('') + '</tr></thead><tbody>';
-  dias.forEach(d => {
-    const iso = toISOGenerico_(d);
-    const label = d.toLocaleDateString('pt-BR', { weekday:'short', day:'2-digit', month:'2-digit' });
-    html += `<tr><td class="disp-dia-label">${label}</td>` +
-      BLOCOS_EXPORT.map(b => {
-        const ocupado = blocoOcupadoPublico_(iso, b);
-        return `<td><div class="disp-bloco ${ocupado ? 'ocupado' : 'livre'}">${ocupado ? 'Ocupado' : 'Livre'}</div></td>`;
-      }).join('') + '</tr>';
-  });
+  const blocos = blocosDoRecurso(recursoPublico);
+  const celula = ocupado => `<td><div class="disp-bloco ${ocupado ? 'ocupado' : 'livre'}">${ocupado ? 'Ocupado' : 'Livre'}</div></td>`;
+  let html;
+
+  if (recursoPublico === 'quadra'){
+    const hoje = toISOGenerico_(new Date());
+    html = '<table class="disp-tabela quadra"><thead><tr><th style="width:52px;"></th>' +
+      dias.map(d => {
+        const iso = toISOGenerico_(d);
+        const sem = d.toLocaleDateString('pt-BR', { weekday:'short' }).replace('.', '');
+        const dm = d.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit' });
+        return `<th class="${iso===hoje ? 'hoje' : ''}"><span>${sem}<br>${dm}</span></th>`;
+      }).join('') + '</tr></thead><tbody>';
+    blocos.forEach(b => {
+      html += `<tr><td class="disp-hora-label">${b.inicio.slice(0,2)}h<span class="hora-fim">–${b.fim.slice(0,2)}h</span></td>` +
+        dias.map(d => celula(intervaloOcupadoPublico_('quadra', toISOGenerico_(d), b.inicio, b.fim))).join('') + '</tr>';
+    });
+  } else {
+    html = '<table class="disp-tabela"><thead><tr><th></th>' + blocos.map(b => `<th>${b.inicio}–${b.fim}</th>`).join('') + '</tr></thead><tbody>';
+    dias.forEach(d => {
+      const iso = toISOGenerico_(d);
+      const label = d.toLocaleDateString('pt-BR', { weekday:'short', day:'2-digit', month:'2-digit' });
+      html += `<tr><td class="disp-dia-label">${label}</td>` +
+        blocos.map(b => celula(intervaloOcupadoPublico_('stand', iso, b.inicio, b.fim))).join('') + '</tr>';
+    });
+  }
   html += '</tbody></table>';
 
   const conteudo = document.getElementById('dispConteudo');
@@ -518,23 +619,27 @@ function renderDisponibilidadePublica(){
 }
 
 // ═══════════════════════════════════════════════════════════════════
-//  SOLICITAR RESERVA DO STAND — formulário público, embutido nesta mesma
-//  tela (modal), sem login. Fica sempre como "pendente" — quem confirma é
-//  a equipe, pelo modal de sempre. Reaproveita reservasPublicas (já carregado
-//  pra disponibilidade) só pra dar um AVISO — quem bloqueia de verdade é o
-//  servidor, que só recusa se já houver reserva CONFIRMADA no mesmo horário.
+//  SOLICITAR RESERVA (Stand ou Quadra) — formulário público, embutido nesta
+//  mesma tela (modal), sem login. O recurso é o da aba ativa na disponibilidade.
+//  Fica sempre como "pendente" — quem confirma é a equipe, pelo modal de
+//  sempre. Reaproveita reservasPublicas só pra dar um AVISO — quem bloqueia de
+//  verdade é o servidor, que só recusa se já houver reserva CONFIRMADA.
 // ═══════════════════════════════════════════════════════════════════
 function abrirModalSolicitar(){
+  const ehQuadra = recursoPublico === 'quadra';
+  const nomeRecurso = ehQuadra ? 'da Quadra de Tênis' : 'do Stand';
+  const horaFimPadrao = minutosParaHora(horaParaMinutos('10:00') + (DURACAO_PADRAO[recursoPublico] || 60));
   document.getElementById('solicitarConteudo').innerHTML = `
-    <h2>Solicitar reserva do Stand</h2>
+    <h2>Solicitar reserva ${nomeRecurso}</h2>
     <p style="font-size:0.82rem;color:var(--text-muted);margin:-0.6rem 0 1.1rem;">
       Preencha os dados abaixo. A reserva fica <b>pendente</b> até a nossa equipe confirmar com você.
-      <b>Isso não substitui o envio da solicitação por e-mail para o Pedro Yunes</b> — continue enviando também por lá.
+      ${ehQuadra ? '' : '<b>Isso não substitui o envio da solicitação por e-mail para o Pedro Yunes</b> — continue enviando também por lá.'}
     </p>
     <div class="aviso-mole" id="avisoMole">
       <i class="ti ti-alert-triangle"></i>
       <span>Esse horário já pode estar ocupado. Você ainda pode enviar — nossa equipe confere e confirma com você.</span>
     </div>
+    ${ehQuadra ? '' : `
     <div class="field">
       <label>Motivo</label>
       <select id="sTipo">
@@ -542,7 +647,7 @@ function abrirModalSolicitar(){
         <option value="apresentacao">Apresentação</option>
         <option value="reuniao">Reunião</option>
       </select>
-    </div>
+    </div>`}
     <div class="row2">
       <div class="field">
         <label>Data</label>
@@ -555,7 +660,15 @@ function abrirModalSolicitar(){
     </div>
     <div class="field">
       <label>Horário até</label>
-      <input type="time" id="sHoraFim" value="12:00">
+      <input type="time" id="sHoraFim" value="${horaFimPadrao}">
+    </div>
+    <div class="field">
+      <label class="check-row"><input type="checkbox" id="sSemanal"> Quero esse horário fixo toda semana</label>
+    </div>
+    <div class="field" id="sCampoAte" style="display:none;">
+      <label>Repetir até (opcional)</label>
+      <input type="date" id="sAte">
+      <div class="campo-nota">Deixe vazio se não tiver data para terminar. A equipe confirma a série inteira.</div>
     </div>
     <div class="field">
       <label>Cliente(s) / Participantes</label>
@@ -565,6 +678,16 @@ function abrirModalSolicitar(){
       <label id="sLabelResponsavel">Gerente e Diretor</label>
       <input type="text" id="sResponsavel" placeholder="Ex: Fulano (Gerente) e Beltrano (Diretor)">
     </div>
+    ${ehQuadra ? `
+    <div class="field">
+      <label>Telefone / WhatsApp</label>
+      <input type="text" id="sTelefone" placeholder="(11) 99999-9999">
+    </div>
+    <div class="field">
+      <label>E-mail</label>
+      <input type="email" id="sEmailCliente" placeholder="nome@email.com">
+      <div class="campo-nota">Usado para confirmar a reserva. Se aprovada, o convite de calendário é enviado automaticamente pra esse e-mail.</div>
+    </div>` : `
     <div class="field">
       <label>Telefone / WhatsApp (opcional)</label>
       <input type="text" id="sTelefone" placeholder="(11) 99999-9999">
@@ -577,7 +700,7 @@ function abrirModalSolicitar(){
       <label>E-mail da equipe (opcional)</label>
       <input type="email" id="sEmailEquipe" placeholder="equipe@yuny.com.br">
       <div class="campo-nota">Usado para confirmar a reserva. Se aprovada, o convite de calendário é enviado automaticamente pra esse(s) e-mail(s).</div>
-    </div>
+    </div>`}
     <div class="field">
       <label>Observação (opcional)</label>
       <textarea id="sObs" placeholder="Alguma informação adicional?"></textarea>
@@ -587,10 +710,21 @@ function abrirModalSolicitar(){
       <button class="btn btn-primary" id="btnSolicitar" onclick="enviarSolicitacaoReserva()"><i class="ti ti-send"></i> Enviar solicitação</button>
     </div>
   `;
+  document.getElementById('solicitarConteudo').dataset.recurso = recursoPublico;
   document.getElementById('sData').value = hojeISO();
-  ['sData','sHora','sHoraFim'].forEach(id => document.getElementById(id).addEventListener('change', checarAvisoMole));
-  document.getElementById('sTipo').addEventListener('change', atualizarLabelResponsavelPublico);
+  ['sData','sHoraFim'].forEach(id => document.getElementById(id).addEventListener('change', checarAvisoMole));
+  // Mudar o início empurra o fim junto (duração padrão do recurso), igual ao modal interno.
+  document.getElementById('sHora').addEventListener('change', () => {
+    const h = document.getElementById('sHora').value;
+    if (h) document.getElementById('sHoraFim').value = minutosParaHora(horaParaMinutos(h) + (DURACAO_PADRAO[recursoPublico] || 60));
+    checarAvisoMole();
+  });
+  if (!ehQuadra) document.getElementById('sTipo').addEventListener('change', atualizarLabelResponsavelPublico);
+  document.getElementById('sSemanal').addEventListener('change', () => {
+    document.getElementById('sCampoAte').style.display = document.getElementById('sSemanal').checked ? '' : 'none';
+  });
   atualizarLabelResponsavelPublico();
+  checarAvisoMole();
   document.getElementById('overlaySolicitar').classList.add('aberto');
 }
 
@@ -598,14 +732,21 @@ function fecharModalSolicitar(){
   document.getElementById('overlaySolicitar').classList.remove('aberto');
 }
 
-// Mesma lógica de rótulo dinâmico do modal interno (atualizarCampoResponsavel),
-// só que aqui o recurso já é sempre "stand" — só o Motivo (tipo) muda o rótulo.
+// Mesma lógica de rótulo do modal interno (atualizarCampoResponsavel):
+//  - Quadra: "Interno responsável" (na página pública; o modal interno segue "Corretor / Origem")
+//  - Stand + Visita/Apresentação: "Gerente e Diretor"
+//  - Stand + Reunião: "Anfitrião"
 function atualizarLabelResponsavelPublico(){
-  const tipoEl = document.getElementById('sTipo');
   const label = document.getElementById('sLabelResponsavel');
   const input = document.getElementById('sResponsavel');
-  if (!tipoEl || !label || !input) return;
-  if (tipoEl.value === 'reuniao'){
+  if (!label || !input) return;
+  if (document.getElementById('solicitarConteudo').dataset.recurso === 'quadra'){
+    label.textContent = 'Interno responsável';
+    input.placeholder = 'Ex: Jose Silva';
+    return;
+  }
+  const tipoEl = document.getElementById('sTipo');
+  if (tipoEl && tipoEl.value === 'reuniao'){
     label.textContent = 'Anfitrião';
     input.placeholder = 'Ex: Roberta Nunes';
   } else {
@@ -620,35 +761,50 @@ function checarAvisoMole(){
   const horaFim = document.getElementById('sHoraFim').value;
   const aviso = document.getElementById('avisoMole');
   if (!aviso || !data || !hora || !horaFim){ if (aviso) aviso.classList.remove('mostrar'); return; }
-  const inicio = horaParaMinutosGenerico_(hora), fim = horaParaMinutosGenerico_(horaFim);
-  const ocupado = reservasPublicas.some(r => {
-    if (r.data !== data) return false;
-    const rInicio = horaParaMinutosGenerico_(r.hora), rFim = horaParaMinutosGenerico_(r.horaFim);
-    return inicio < rFim && fim > rInicio;
-  });
-  aviso.classList.toggle('mostrar', ocupado);
+  const recurso = document.getElementById('solicitarConteudo').dataset.recurso || 'stand';
+  aviso.classList.toggle('mostrar', intervaloOcupadoPublico_(recurso, data, hora, horaFim));
 }
 
 async function enviarSolicitacaoReserva(){
+  const recurso = document.getElementById('solicitarConteudo').dataset.recurso || 'stand';
   const cliente = document.getElementById('sCliente').value.trim();
   const responsavel = document.getElementById('sResponsavel').value.trim();
   const telefone = document.getElementById('sTelefone').value.trim();
   const emailCliente = document.getElementById('sEmailCliente').value.trim();
-  const emailEquipe = document.getElementById('sEmailEquipe').value.trim();
+  const emailEquipeEl = document.getElementById('sEmailEquipe'); // só existe no formulário do Stand
+  const emailEquipe = emailEquipeEl ? emailEquipeEl.value.trim() : '';
   const email = [emailCliente, emailEquipe].filter(Boolean).join(', '); // "um ou mais endereços" — mesma coluna email_convite
-  const tipo = document.getElementById('sTipo').value;
+  const tipoEl = document.getElementById('sTipo');
+  const tipo = recurso === 'stand' && tipoEl ? tipoEl.value : null;
   const data = document.getElementById('sData').value;
   const hora = document.getElementById('sHora').value;
   const horaFim = document.getElementById('sHoraFim').value;
   const obs = document.getElementById('sObs').value.trim();
+  const repetirSemanal = document.getElementById('sSemanal').checked;
+  const repetirAte = repetirSemanal ? document.getElementById('sAte').value : '';
 
   if (!cliente || !data || !hora || !horaFim){
     mostrarToast('Preencha cliente/participantes, data e horário de início/fim.');
     return;
   }
+  if (repetirAte && repetirAte < data){
+    mostrarToast('A data final da repetição deve ser depois da data inicial.');
+    return;
+  }
   if (horaParaMinutosGenerico_(horaFim) <= horaParaMinutosGenerico_(hora)){
     mostrarToast('O horário até deve ser depois do horário de.');
     return;
+  }
+  // Quadra: telefone e e-mail são obrigatórios.
+  if (recurso === 'quadra'){
+    if (!telefone || !emailCliente){
+      mostrarToast('Preencha telefone/WhatsApp e e-mail.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailCliente)){
+      mostrarToast('Confira o e-mail — parece estar incompleto.');
+      return;
+    }
   }
 
   const btn = document.getElementById('btnSolicitar');
@@ -658,7 +814,7 @@ async function enviarSolicitacaoReserva(){
     const resp = await fetch(AGENDA_SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'solicitarReserva', cliente, responsavel, telefone, email, tipo, data, hora, horaFim, obs })
+      body: JSON.stringify({ action: 'solicitarReserva', recurso, cliente, responsavel, telefone, email, tipo, data, hora, horaFim, obs, repetirSemanal, repetirAte })
     });
     const result = await resp.json();
 
@@ -676,7 +832,7 @@ async function enviarSolicitacaoReserva(){
         <i class="ti ti-circle-check"></i>
         <h3>Solicitação enviada!</h3>
         <p>Nossa equipe vai confirmar com você em breve pelo telefone ou e-mail informado.</p>
-        <p style="margin-top:0.6rem;"><b>Lembre-se:</b> envie também a solicitação por e-mail para o Pedro Yunes — esse formulário não substitui isso.</p>
+        ${recurso === 'quadra' ? '' : '<p style="margin-top:0.6rem;"><b>Lembre-se:</b> envie também a solicitação por e-mail para o Pedro Yunes — esse formulário não substitui isso.</p>'}
         <button class="btn btn-primary" style="margin-top:1.2rem;justify-content:center;" onclick="fecharModalSolicitar()">Fechar</button>
       </div>
     `;
@@ -825,17 +981,20 @@ function horaParaMinutos(hhmm){
   return h*60+m;
 }
 
-function detectarConflito(recurso, data, hora, horaFim, idIgnorar){
+// regraNova = { data, semanal, ate, excecoes }. Considera séries dos dois lados.
+// Retorna { reserva, data } da primeira colisão, ou null.
+function detectarConflito(recurso, regraNova, hora, horaFim, idIgnorar){
   const inicio = horaParaMinutos(hora);
   const fim = horaParaMinutos(horaFim);
-  return reservas.find(r => {
-    if (r.id === idIgnorar) return false;
-    if (r.recurso !== recurso || r.data !== data) return false;
-    if (r.status === 'cancelado') return false;
-    const rInicio = horaParaMinutos(r.hora);
-    const rFim = horaParaMinutos(r.horaFim);
-    return inicio < rFim && fim > rInicio;
-  });
+  for (const r of reservas){
+    if (r.id === idIgnorar) continue;
+    if (r.recurso !== recurso || r.status === 'cancelado') continue;
+    const rInicio = horaParaMinutos(r.hora), rFim = horaParaMinutos(r.horaFim);
+    if (!(inicio < rFim && fim > rInicio)) continue;
+    const data = primeiraDataComum(regraNova, regraDe(r));
+    if (data) return { reserva: r, data };
+  }
+  return null;
 }
 
 function duracaoMinutos(hora, horaFim){
@@ -877,7 +1036,7 @@ function montarResumo(){
   const semanaAtualDomingo = new Date(semanaAtualSegunda); semanaAtualDomingo.setDate(semanaAtualSegunda.getDate()+6);
   const inicioISO = toISO(semanaAtualSegunda), fimISO = toISO(semanaAtualDomingo);
 
-  const daSemana = reservas.filter(r => r.data >= inicioISO && r.data <= fimISO && r.status !== 'cancelado');
+  const daSemana = expandirReservas(reservas, inicioISO, fimISO).filter(r => r.status !== 'cancelado');
   const pendentes = reservas.filter(r => r.status === 'pendente').length;
   const standCount = daSemana.filter(r => r.recurso === 'stand').length;
   const quadraCount = daSemana.filter(r => r.recurso === 'quadra').length;
@@ -913,12 +1072,13 @@ function render(){
   }
 
   const hoje = hojeISO();
+  const reservasDaSemana = expandirReservas(reservas, toISO(segunda), toISO(domingo));
   let html = '';
   let algumaReserva = false;
 
   dias.forEach(d => {
     const iso = toISO(d);
-    let doDia = reservas.filter(r => r.data === iso);
+    let doDia = reservasDaSemana.filter(r => r.data === iso);
     if (filtroRecurso !== 'todos') doDia = doDia.filter(r => r.recurso === filtroRecurso);
     doDia.sort((a,b) => a.hora.localeCompare(b.hora));
     if (!doDia.length) return;
@@ -934,13 +1094,14 @@ function render(){
       const statusLabel = { confirmado:'Confirmado', pendente:'Pendente', cancelado:'Cancelado' }[r.status];
       const statusClass = { confirmado:'status-confirmado', pendente:'status-pendente', cancelado:'status-cancelado-pill' }[r.status];
       const tipoInfo = r.tipo ? TIPOS_STAND[r.tipo] : null;
-      html += `<div class="reserva-card recurso-${r.recurso} status-${r.status}" onclick="abrirModal('${r.id}')">
+      html += `<div class="reserva-card recurso-${r.recurso} status-${r.status}" onclick="abrirModal('${r.id}','${r.data}')">
         <div class="r-hora">${r.hora} – ${r.horaFim}<span class="r-duracao">${formatarDuracao(duracaoMinutos(r.hora, r.horaFim))}</span></div>
         <div class="r-corpo">
           <div class="r-titulo-row">
             <span class="r-titulo">${r.responsavel || '(sem responsável informado)'}</span>
             <span class="r-recurso-tag"><i class="ti ${rec.icon}"></i> ${rec.label}</span>
             ${tipoInfo ? `<span class="r-tipo-tag">${tipoInfo.label}</span>` : ''}
+            ${r.ehOcorrenciaSerie ? `<span class="r-tipo-tag r-serie-tag" title="${descricaoSerie(r)}"><i class="ti ti-repeat"></i> Semanal</span>` : ''}
             ${r.conviteEnviado ? `<span class="r-tipo-tag" style="color:var(--ok);border-color:rgba(21,128,61,0.3);" title="Convite de calendário enviado"><i class="ti ti-calendar-check"></i> Convite enviado</span>` : ''}
           </div>
           <div class="r-cliente ${ocultarCliente ? 'oculto' : ''}"><i class="ti ti-user"></i> ${ocultarCliente ? 'Cliente oculto' : (r.cliente || '(sem cliente informado)')}</div>
@@ -987,11 +1148,25 @@ function atualizarCampoResponsavel(){
   }
 }
 
-function abrirModal(id){
+// id vazio = nova reserva. dataOcorrencia = a semana clicada, quando a reserva é uma série.
+function abrirModal(id, dataOcorrencia){
   const overlay = document.getElementById('overlay');
   document.getElementById('conflitoAviso').classList.remove('mostrar');
+  document.getElementById('fDataOcorrencia').value = '';
+  document.getElementById('serieBox').style.display = 'none';
   if (id){
     const r = reservas.find(x => x.id === id);
+    document.getElementById('fSemanal').checked = !!r.repetirSemanal;
+    document.getElementById('fAte').value = r.repetirAte || '';
+    if (r.repetirSemanal && dataOcorrencia){
+      document.getElementById('fDataOcorrencia').value = dataOcorrencia;
+      document.getElementById('serieTitulo').textContent = `Reserva semanal — semana de ${fmtDM(dataOcorrencia)}`;
+      document.getElementById('serieDesc').textContent = descricaoSerie(r) +
+        '. Os campos abaixo valem para a série inteira.' +
+        (r.excecoes && r.excecoes.length ? ` Semanas puladas: ${r.excecoes.map(fmtDM).join(', ')}.` : '');
+      document.getElementById('btnPularTxt').textContent = `Pular só ${fmtDM(dataOcorrencia)}`;
+      document.getElementById('serieBox').style.display = 'block';
+    }
     document.getElementById('modalTitulo').textContent = 'Editar Reserva';
     document.getElementById('fId').value = r.id;
     document.getElementById('fRecurso').value = r.recurso;
@@ -1032,9 +1207,58 @@ function abrirModal(id){
     document.getElementById('fStatus').value = 'confirmado';
     document.getElementById('btnExcluir').style.display = 'none';
     document.getElementById('fConviteStatus').style.display = 'none';
+    document.getElementById('fSemanal').checked = false;
+    document.getElementById('fAte').value = '';
   }
   atualizarCampoResponsavel();
+  atualizarCamposSemanal();
   overlay.classList.add('aberto');
+}
+
+function atualizarCamposSemanal(){
+  const semanal = document.getElementById('fSemanal').checked;
+  document.getElementById('campoAte').style.display = semanal ? '' : 'none';
+  document.getElementById('labelData').textContent = semanal ? 'Data (1ª semana)' : 'Data';
+  const ehSerieSalva = !!document.getElementById('fId').value && semanal;
+  document.getElementById('btnExcluir').innerHTML = ehSerieSalva
+    ? '<i class="ti ti-trash"></i> Excluir série inteira'
+    : '<i class="ti ti-trash"></i> Excluir';
+}
+
+// Pular / encerrar — ações da semana clicada numa série.
+async function acaoSerie_(action, msgOk){
+  const id = document.getElementById('fId').value;
+  const dataOcorrencia = document.getElementById('fDataOcorrencia').value;
+  if (!id || !dataOcorrencia) return;
+  const usuario = localStorage.getItem(LOGIN_STORAGE_KEY) || 'desconhecido';
+  try{
+    const resp = await fetch(AGENDA_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action, id, dataOcorrencia, usuario })
+    });
+    const result = await resp.json();
+    if (!result || result.status !== 'success'){
+      mostrarToast((result && result.message) || 'Não foi possível concluir. Tente de novo.');
+      return;
+    }
+    fecharModal();
+    await carregarReservas();
+    mostrarToast(result.avisoCalendario || msgOk, result.avisoCalendario ? 7000 : 2500);
+  } catch(e){
+    console.error(e);
+    mostrarToast('Erro de conexão. Verifique sua internet e tente de novo.');
+  }
+}
+function pularOcorrencia(){
+  const d = document.getElementById('fDataOcorrencia').value;
+  if (!confirm(`Pular só a semana de ${fmtDM(d)}? As outras semanas continuam reservadas.`)) return;
+  acaoSerie_('pularOcorrencia', `Semana de ${fmtDM(d)} liberada.`);
+}
+function encerrarSerie(){
+  const d = document.getElementById('fDataOcorrencia').value;
+  if (!confirm(`Encerrar a série a partir de ${fmtDM(d)}? Essa semana e todas as seguintes ficam livres; as anteriores continuam no histórico.`)) return;
+  acaoSerie_('encerrarSerie', `Série encerrada a partir de ${fmtDM(d)}.`);
 }
 function fecharModal(){ document.getElementById('overlay').classList.remove('aberto'); }
 
@@ -1050,24 +1274,31 @@ async function salvarReserva(){
   const obs = document.getElementById('fObs').value.trim();
   const email = document.getElementById('fEmail').value.trim();
   const status = document.getElementById('fStatus').value;
+  const repetirSemanal = document.getElementById('fSemanal').checked;
+  const repetirAte = repetirSemanal ? document.getElementById('fAte').value : '';
 
   document.getElementById('conflitoAviso').classList.remove('mostrar');
 
   if (!data || !hora || !horaFim){ mostrarToast('Preencha data, horário de início e horário de término.'); return; }
   if (horaParaMinutos(horaFim) <= horaParaMinutos(hora)){ mostrarToast('O horário até deve ser depois do horário de.'); return; }
+  if (repetirAte && repetirAte < data){ mostrarToast('A data final da repetição deve ser depois da 1ª semana.'); return; }
 
   // Bloqueio na tela pra resposta imediata — o servidor confere o conflito de novo
   // (protege contra duas pessoas mexendo ao mesmo tempo pelo link separado).
-  const conflitoLocal = (status !== 'cancelado') ? detectarConflito(recurso, data, hora, horaFim, id) : null;
+  const existente = id ? reservas.find(x => x.id === id) : null;
+  const regraNova = { data, semanal: repetirSemanal, ate: repetirAte, excecoes: (repetirSemanal && existente && existente.excecoes) || [] };
+  const conflitoLocal = (status !== 'cancelado') ? detectarConflito(recurso, regraNova, hora, horaFim, id) : null;
   if (conflitoLocal){
+    const c = conflitoLocal.reserva;
     document.getElementById('conflitoTexto').textContent =
-      `Já existe uma reserva do ${RECURSOS[recurso].label} nesse horário: ${conflitoLocal.hora} – ${conflitoLocal.horaFim} — ${conflitoLocal.cliente || '(sem cliente)'}. Escolha outro horário para salvar.`;
+      `Já existe uma reserva${regraDe(c).semanal ? ' semanal' : ''} ${recurso === 'quadra' ? 'da Quadra' : 'do Stand'} nesse horário em ${fmtDM(conflitoLocal.data)}: ${c.hora} – ${c.horaFim} — ${c.cliente || '(sem cliente)'}.` +
+      (repetirSemanal ? ' Mude o horário, a data final da série, ou pule essa semana depois de salvar a outra.' : ' Escolha outro horário para salvar.');
     document.getElementById('conflitoAviso').classList.add('mostrar');
     return;
   }
 
   const usuario = localStorage.getItem(LOGIN_STORAGE_KEY) || 'desconhecido';
-  const payload = { action: id ? 'updateReserva' : 'createReserva', recurso, tipo, data, hora, horaFim, cliente, responsavel, obs, email, status, usuario };
+  const payload = { action: id ? 'updateReserva' : 'createReserva', recurso, tipo, data, hora, horaFim, cliente, responsavel, obs, email, status, usuario, repetirSemanal, repetirAte };
   if (id) payload.id = id;
 
   const btn = document.getElementById('btnSalvar');
@@ -1110,6 +1341,8 @@ async function salvarReserva(){
 async function excluirReserva(){
   const id = document.getElementById('fId').value;
   if (!id) return;
+  const r = reservas.find(x => x.id === id);
+  if (r && r.repetirSemanal && !confirm('Excluir a série inteira? Todas as semanas, inclusive as passadas, saem da agenda. Para parar só daqui pra frente, use "Encerrar série a partir desta semana".')) return;
   const usuario = localStorage.getItem(LOGIN_STORAGE_KEY) || 'desconhecido';
   try{
     const resp = await fetch(AGENDA_SCRIPT_URL, {
@@ -1143,12 +1376,27 @@ const BLOCOS_EXPORT = [
   { inicio:'18:00', fim:'20:00' }
 ];
 
+// Quadra de Tênis: blocos de 1 hora, das 07h às 22h. Usado tanto na página
+// pública quanto na exportação de imagem da área interna.
+const BLOCOS_QUADRA = (() => {
+  const b = [];
+  for (let h = 7; h < 22; h++){
+    b.push({ inicio: String(h).padStart(2,'0') + ':00', fim: String(h+1).padStart(2,'0') + ':00' });
+  }
+  return b;
+})();
+
+function blocosDoRecurso(recurso){ return recurso === 'quadra' ? BLOCOS_QUADRA : BLOCOS_EXPORT; }
+function rotuloBloco(recurso, b){
+  return recurso === 'quadra' ? `${b.inicio.slice(0,2)}h–${b.fim.slice(0,2)}h` : `${b.inicio}–${b.fim}`;
+}
+
 // Um bloco conta como ocupado se QUALQUER reserva (não cancelada) daquele
 // recurso, naquele dia, encostar nele — mesmo que só parcialmente.
 function blocoOcupado(recurso, dataISO, bloco){
   const inicio = horaParaMinutos(bloco.inicio), fim = horaParaMinutos(bloco.fim);
-  return reservas.some(r => {
-    if (r.recurso !== recurso || r.data !== dataISO) return false;
+  return expandirReservas(reservas, dataISO, dataISO).some(r => {
+    if (r.recurso !== recurso) return false;
     if (r.status === 'cancelado') return false;
     const rInicio = horaParaMinutos(r.hora), rFim = horaParaMinutos(r.horaFim);
     return inicio < rFim && fim > rInicio;
@@ -1199,14 +1447,14 @@ async function exportarDisponibilidade(escopo){
     html += `<div class="export-secao">
       <div class="export-secao-titulo">${RECURSOS[rec].label}</div>
       <table class="export-tabela">
-        <thead><tr><th></th>${BLOCOS_EXPORT.map(b => `<th>${b.inicio}–${b.fim}</th>`).join('')}</tr></thead>
+        <thead><tr><th></th>${blocosDoRecurso(rec).map(b => `<th>${rotuloBloco(rec, b)}</th>`).join('')}</tr></thead>
         <tbody>
           ${dias.map(d => {
             const iso = toISO(d);
             const label = escopo === 'dia' ? 'Hoje' : d.toLocaleDateString('pt-BR', { weekday:'short', day:'2-digit', month:'2-digit' });
             return `<tr>
               <td class="export-dia-label" style="text-transform:capitalize;">${label}</td>
-              ${BLOCOS_EXPORT.map(b => {
+              ${blocosDoRecurso(rec).map(b => {
                 const ocupado = blocoOcupado(rec, iso, b);
                 return `<td><div class="export-bloco ${ocupado ? 'ocupado' : 'livre'}">${ocupado ? 'Ocupado' : 'Livre'}</div></td>`;
               }).join('')}
@@ -1227,6 +1475,8 @@ async function exportarDisponibilidade(escopo){
 
   const container = document.createElement('div');
   container.className = 'export-render';
+  // A Quadra tem 15 colunas de 1h — alarga a imagem pra caber sem espremer.
+  if (recursosParaExportar.indexOf('quadra') !== -1) container.style.width = '1240px';
   container.innerHTML = html;
   document.body.appendChild(container);
 
